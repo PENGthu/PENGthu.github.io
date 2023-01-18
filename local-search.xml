@@ -8,7 +8,7 @@
     <link href="/2023/01/18/%E7%AC%AC%E4%B8%80%E7%AF%87blog/"/>
     <url>/2023/01/18/%E7%AC%AC%E4%B8%80%E7%AF%87blog/</url>
     
-    <content type="html"><![CDATA[<h1 id="我的第一篇blog"><a href="#我的第一篇blog" class="headerlink" title="我的第一篇blog"></a>我的第一篇blog</h1><p>2023&#x2F;1&#x2F;18<br>收到了很用心的礼物，非常高兴</p>]]></content>
+    <content type="html"><![CDATA[<h1 id="我的第一篇blog"><a href="#我的第一篇blog" class="headerlink" title="我的第一篇blog"></a>我的第一篇blog</h1><p>2023&#x2F;1&#x2F;18<br>收到了很用心的礼物，非常高兴<br>下面测试博客的一些其他功能：</p><h2 id="代码复制功能"><a href="#代码复制功能" class="headerlink" title="代码复制功能"></a>代码复制功能</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> npy<br><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;This is my personal blog! @PENGthu&quot;</span>)<br></code></pre></td></tr></table></figure><h2 id="公式编辑功能"><a href="#公式编辑功能" class="headerlink" title="公式编辑功能"></a>公式编辑功能</h2>]]></content>
     
     
     
