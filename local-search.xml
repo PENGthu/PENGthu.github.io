@@ -8,7 +8,7 @@
     <link href="/2023/01/20/Vue%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
     <url>/2023/01/20/Vue%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</url>
     
-    <content type="html"><![CDATA[<p>总算要开始学Vue了，也算是为下学期的软工做点准备（<br>先占个坑激励自己学（×<br>以及 纠结后端是用flask还是django…</p>]]></content>
+    <content type="html"><![CDATA[<p>总算要开始学Vue了，也算是为下学期的软工做点准备（<br>先占个坑激励自己学（×<br>以及 纠结后端是用flask还是django…</p><p>开更！<br>就先基于<a href="v3.vuejs.org">Vue3官网</a>学吧</p><h2 id="创建一个vue应用"><a href="#创建一个vue应用" class="headerlink" title="创建一个vue应用"></a>创建一个vue应用</h2><p>通过<code>createApp</code>函数创建:</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs vue">import &#123; createapp &#125; from &#x27;vue&#x27;<br>const app = createApp(&#123;<br>    /*根组件选项*/<br>&#125;)<br></code></pre></td></tr></table></figure>]]></content>
     
     
     
@@ -27,7 +27,7 @@
     <link href="/2023/01/20/page/"/>
     <url>/2023/01/20/page/</url>
     
-    <content type="html"><![CDATA[<p>期末出了四门成绩。<br>感觉还挺幸运的，概率论和工程经济学都拿到了4.0。<br>希望这学期绩点能再往上走一走吧<br>（今天抢了好几次红包封面都没抢到ww</p><blockquote><p>这几天打算把那个博客的评论功能搞一下。今天试着用了用gitalk，vercel之类的，好像效果都不太好。</p></blockquote>]]></content>
+    <content type="html"><![CDATA[<p>期末出了四门成绩。<br>感觉还挺幸运的，概率论和工程经济学都拿到了4.0。<br>希望这学期绩点能再往上走一走吧<br>（今天抢了好几次红包封面都没抢到ww</p><blockquote><p>这几天打算把那个博客的评论功能搞一下。今天试着用了用gitalk，vercel之类的，好像效果都不太好。<br>现在比较担心的就是马原 毕竟四学分<br>怎么都要大二下了还被</p></blockquote>]]></content>
     
     
     
