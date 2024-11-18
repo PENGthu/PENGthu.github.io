@@ -12,9 +12,9 @@ title                    : "JP's Blog"
 title_separator          : "-"
 name                     : &name "Jinpeng Wang"
 description              : &description "personal description"
-url                      : https://academicpages.github.io # the base hostname & protocol for your site e.g. "https://[your GitHub username].github.io"
+url                      : https://PENGthu.github.io # the base hostname & protocol for your site e.g. "https://[your GitHub username].github.io"
 baseurl                  : "" # the subpath of your site, e.g. "/blog"
-repository               : "academicpages/academicpages.github.io"
+repository               : "PENGthu/PENGthu.github.io"
 
 # Site Author - The following control what appear as part of the author content on the side bar.
 #               If a field is blank the icon and link will not appear, otherwise it will be shown.
@@ -24,9 +24,9 @@ author:
   avatar           : "profile.png"
   name             : "Jinpeng Wang"
   pronouns         : # example: "she/her"  
-  bio              : "An upcoming graduate student of thss"
+  bio              : "An upcoming graduate student from School of Software, Tsinghua University"
   location         : "Beijing"
-  employer         : "School of Software, Tsinghua University"
+  employer         : "Tsinghua University"
   uri              : # URL
   email            : "wjp21@mails.tsinghua.edu.cn" 
 
