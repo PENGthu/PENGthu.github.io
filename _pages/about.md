@@ -9,8 +9,8 @@ redirect_from:
 
 Education
 ======
-* M.S. in School of Software, Tsinghua University, 2025
-* B.S. in Weiyang College, Tsinghua University, 2021
+* M.S. in School of Software, Tsinghua University, 2025-
+* B.S. in Weiyang College, Tsinghua University, 2021-2025
 
 Getting started
 ======
