@@ -3,7 +3,7 @@ title: "Multi-Energy Guided Image Translation with Stochastic Differential Equat
 collection: publications
 category: conferences
 permalink: /publication/2024-03-25-paper-title-number-4
-excerpt: 'This paper is about FER.'
+excerpt: 'CCF-A'
 date: 2024-03-25
 venue: 'Proceedings of the AAAI Conference on Artificial Intelligence'
 paperurl: 'https://ojs.aaai.org/index.php/AAAI/article/view/27812'
