@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#173e3b">
+  <meta name="description" content="鳌太·每一步：一款以天气、团队与补给为核心的山地决策模拟游戏。每一个选择都留下可以回看的因果。">
+  <title>鳌太 · 每一步｜山地决策模拟</title>
+  <link rel="stylesheet" href="./style.css">
+  <script type="module" src="./app.mjs"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#" aria-label="鳌太每一步首页"><svg viewBox="0 0 36 36" aria-hidden="true"><path d="M3 29 14 8l6 10 5-7 9 18M11 14l3 5 3-5M21 17l4 5 3-4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span>鳌太 <i>／</i> 每一步<small>MOUNTAIN DECISION SIMULATOR</small></span></a>
+    <nav aria-label="游戏工具"><button id="help-button" class="text-button">玩法与依据</button><button id="export-button" class="text-button">导出复盘 <span>↗</span></button><button id="restart-button" class="outline-button">新推演</button></nav>
+  </header>
+  <main>
+    <div class="page-heading"><div><span class="eyebrow"><span class="live-dot"></span> 山地决策实验室</span><h1>山不会为你的计划让步。</h1><p>观察变化，照顾队友，再决定下一步。</p></div><div class="session-label" id="session-label"></div></div>
+    <div class="game-layout">
+      <section class="journey-column" aria-label="山地场景与决策">
+        <div class="landscape" id="landscape">
+          <div class="scene-top"><div><span class="eyebrow light">当前位置</span><h2 id="location-name">密林</h2><p id="location-detail"></p></div><div class="weather-pill" id="weather-pill"></div></div>
+          <svg class="mountain-art" viewBox="0 0 900 350" preserveAspectRatio="xMidYMid slice" aria-label="抽象山脊景观" role="img">
+            <defs><linearGradient id="sky" x2="0" y2="1"><stop stop-color="#294f52"/><stop offset="1" stop-color="#97b1aa"/></linearGradient><linearGradient id="peak" x2="0" y2="1"><stop stop-color="#62827b"/><stop offset="1" stop-color="#234a44"/></linearGradient><linearGradient id="front" x2="0" y2="1"><stop stop-color="#284e45"/><stop offset="1" stop-color="#133c34"/></linearGradient><filter id="fog"><feGaussianBlur stdDeviation="18"/></filter></defs>
+            <path fill="url(#sky)" d="M0 0h900v350H0z"/>
+            <circle cx="691" cy="58" r="30" fill="#dfdfc4" opacity=".6"/>
+            <path d="M0 212 89 135 134 156 236 64 327 171 404 116 477 162 578 47 665 122 735 87 817 176 900 128V350H0Z" fill="#819e96" opacity=".55"/>
+            <path d="m0 292 105-104 53 19L312 35l127 177 85-70 55 44 82-102 124 166 115-60v160H0Z" fill="url(#peak)"/>
+            <path d="m236 125 76-90 58 81-40-21-18 11-23-20-19 30ZM616 140l45-56 54 73-46-27-16 10-16-12Z" fill="#d2dcd3" opacity=".74"/>
+            <path d="m312 35 127 177-58-13-37 10-13-65ZM661 84l124 166-81-41Z" fill="#345e57" opacity=".7"/>
+            <path d="M0 276 100 235 211 263 312 178 417 284 505 229 561 266 704 200 784 260 900 224v126H0Z" fill="url(#front)"/>
+            <path d="M0 316 110 281 208 308 348 275 419 305 558 284 650 319 766 280 900 309v41H0Z" fill="#123b34"/>
+            <g id="scene-fog" filter="url(#fog)" fill="#d2dfd7" opacity=".2"><ellipse cx="190" cy="196" rx="240" ry="20"/><ellipse cx="674" cy="228" rx="220" ry="25"/></g>
+            <path d="M0 341q110-44 178-26t151-14 140 10 146-15 135 17 150-2" stroke="#b4c6b9" stroke-width="1" fill="none" opacity=".17"/>
+          </svg>
+          <div class="scene-bottom"><div class="terrain-chip" id="terrain-chip"></div><div id="weather-metrics"></div></div>
+        </div>
+        <div class="route-panel"><div class="section-label"><span>行程剖面 <small>抽象节点 · 非真实导航</small></span><span id="progress-label"></span></div><svg id="route-map" viewBox="0 0 820 130" role="img" aria-label="抽象行程进度"></svg><div class="route-key"><span><i class="route-current"></i>队伍位置</span><span><i class="route-shelter"></i>较多遮蔽</span><span id="direction-label">向接应点前行</span></div></div>
+        <div class="decision-heading"><div><span class="eyebrow">NEXT MOVE</span><h2 id="decision-title">这一刻，你如何决定？</h2></div><span class="turn-tag" id="turn-tag"></span></div>
+        <div id="event-panel" hidden></div>
+        <div class="action-grid" id="action-grid"></div>
+        <div class="commit-panel"><div><span class="eyebrow">已选行动</span><strong id="selected-label">先选择一个行动</strong><p id="selected-description">每一步先观察，再决定。</p></div><button id="commit-button" class="primary-button" disabled>执行决策 <span>→</span></button></div>
+        <div class="feedback-panel" id="feedback-panel" aria-live="polite"></div>
+      </section>
+      <aside class="status-column" aria-label="队伍状态">
+        <section class="status-card"><div class="section-label"><span>队伍仪表</span><span class="risk-badge" id="risk-badge"></span></div><div class="big-clock" id="clock"></div><div id="team-stats"></div><div class="condition-line" id="condition-line"></div></section>
+        <section class="status-card"><div class="section-label"><span>三个人，一支队伍</span><span>03</span></div><div id="members"></div><div class="card-note">速度看最慢的队员，结局看每个人。</div></section>
+        <section class="status-card"><div class="section-label"><span>背包与保障</span><span id="pack-name"></span></div><div class="resources-grid" id="resources"></div><div id="rescue-panel"></div></section>
+        <section class="forecast-card"><div class="section-label"><span>天气趋势</span><span>估计，非承诺</span></div><div id="forecast"></div></section>
+      </aside>
+    </div>
+    <section class="log-section"><div class="log-heading"><div><span class="eyebrow">DECISION JOURNAL</span><h2>每个选择，都有来处。</h2></div><span id="log-count">尚未做出决策</span></div><div id="journal"></div></section>
+  </main>
+  <footer><span>鳌太 · 每一步 <i>／</i> 以安全归来为目标</span><span>虚构风险推演 · 数值为游戏单位 · 不提供真实导航</span></footer>
+  <dialog id="start-dialog" class="setup-dialog"><div class="modal-top"><span class="eyebrow">AOTAI / EVERY STEP</span><button class="icon-button" id="close-start" aria-label="关闭新推演设置" hidden>×</button></div><div class="setup-title"><div class="mountain-symbol">△</div><h2>路在山里，<br>选择在你手里。</h2><p>你带着两名队友进入一段虚构山地。<br>前进、停留、撤离，每一步都改变结局。</p></div><form id="setup-form"><fieldset><legend>选择情境</legend><div class="scenario-options"><label><input type="radio" name="scenario" value="autumn" checked><span><b>秋日骤变</b><small>晴天出发，风雪将至</small></span></label><label><input type="radio" name="scenario" value="winter"><span><b>冬季风雪</b><small>更低温度，更短窗口</small></span></label><label><input type="radio" name="scenario" value="fog"><span><b>雾中同行</b><small>方向判断与团队联系</small></span></label></div></fieldset><div class="setup-row"><label>装备方案<select name="pack"><option value="standard">完整装备 · 22 kg · 帐篷 + 卫星通信</option><option value="light">轻装出行 · 12 kg · 无帐篷 / 卫星通信</option><option value="heavy">冗余装备 · 29 kg · 更保温，也更疲劳</option></select></label><label>情境种子<input name="seed" type="number" value="261006" min="0" max="999999999"></label></div><div class="setup-note">同一种子可以重玩。结束后可回到任何一步，比较不同选择；及时撤离和等待救援也可以得到好成绩。</div><button class="primary-button start-button" type="submit">开始推演 <span>→</span></button><button id="resume-button" type="button" class="resume-button" hidden>继续上次的推演</button></form></dialog>
+  <dialog id="help-dialog" class="help-dialog"><div class="modal-top"><span class="eyebrow">关于这场推演</span><button data-close="help-dialog" class="icon-button" aria-label="关闭玩法介绍">×</button></div><h2>先观察，再选择。</h2><p>点击行动卡查看取舍，再点击「执行决策」。每步推进 20–60 分钟；天气、体力、保温、补给和队伍联系随时间变化。</p><ol><li>保温和体力是每个人的状态；任一队员降到危急阈值，推演终止。</li><li>口粮、储水与饱食、补水状态不同。背包里有食物，不代表已经进食。</li><li>营地和避风处能减少暴露，移动会失去遮蔽。强风中的营地保护较弱，装备也会受损。</li><li>联系救援需要可用通信与电量；天气、移动位置会改变等待时间。</li><li>在复盘记录中点击「从此处重选」，可以回到同一个情境，观察不同决策的结果。</li></ol><p class="help-small">快捷键：数字 1–9 选行动，Enter 执行。进度自动保存在当前浏览器，也可以导出 JSON 复盘。</p><div class="source-note"><b>模型依据与边界</b><p>风险主题参考公开事故报道中的天气变化、失温、队伍走散和救援延迟。角色、路线、资源数值和事件均为虚构，模型不能预测真实山地生存结果。鳌太区域存在禁止擅自穿越的管理规定。</p><a href="https://www.peopleapp.com/rmharticle/30051159988" target="_blank" rel="noopener">中国气象局：鳌太线气象风险 ↗</a><a href="https://www.xinhuanet.com/20260107/5461f592affd4ec887aed1672e0579b4/c.html" target="_blank" rel="noopener">新华社：2026 年元旦事故进展 ↗</a><a href="https://www.sport.gov.cn/n20001280/n20745751/c29349845/content.html" target="_blank" rel="noopener">体育总局：严禁违规徒步穿越通知 ↗</a></div></dialog>
+  <dialog id="result-dialog" class="result-dialog"><div id="result-content"></div></dialog>
+  <div id="toast" class="toast" role="status" hidden></div>
+</body>
+</html>
