@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="w" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5fd0d6"/><stop offset=".25" stop-color="#1f8fa3"/>
+      <stop offset=".55" stop-color="#0d4f63"/><stop offset="1" stop-color="#02070d"/>
+    </linearGradient>
+    <linearGradient id="beam" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#c8faff" stop-opacity=".35"/><stop offset="1" stop-color="#c8faff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="torch" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(712 470) scale(120)">
+      <stop offset="0" stop-color="#fff3b0" stop-opacity=".55"/><stop offset="1" stop-color="#fff3b0" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="#16130f"/>
+  <rect width="1200" height="70" fill="#d7eef2"/>
+  <rect y="66" width="1200" height="6" fill="#2f5a3a"/>
+  <path d="M330 72 L420 140 L600 140 L690 72 Z" fill="#e8f5f1"/>
+  <path d="M420 140 H600 C610 210 640 250 660 300 L700 330 L740 600 L715 630 L690 630 L680 340 L630 320 C560 290 470 250 420 140 Z" fill="url(#w)"/>
+  <path d="M630 320 L900 345 L905 380 L660 352 Z" fill="#0d4f63"/>
+  <g fill="url(#beam)">
+    <path d="M450 140 L470 140 L520 330 L495 330 Z"/><path d="M500 140 L522 140 L575 320 L548 320 Z"/>
+    <path d="M555 140 L572 140 L615 300 L595 300 Z"/>
+  </g>
+  <path d="M520 220 L640 330 L690 338 L712 630" fill="none" stroke="#f2d36b" stroke-width="3"/>
+  <circle cx="712" cy="470" r="120" fill="url(#torch)"/>
+  <g transform="translate(706 420) rotate(86)">
+    <rect x="-34" y="-17" width="40" height="9" fill="#c9d4d6"/>
+    <ellipse rx="34" ry="11" fill="#1d2a33"/>
+    <circle cx="38" cy="0" r="9" fill="#e8b04a"/>
+    <path d="M-32 0 L-62 -14 L-58 14 Z" fill="#1b6f8a"/>
+  </g>
+  <line x1="0" y1="345" x2="1200" y2="345" stroke="#ff6b5b" stroke-width="2" stroke-dasharray="10 8" opacity=".7"/>
+  <text x="70" y="520" fill="#dcecef" font-family="PingFang SC, Noto Sans SC, sans-serif" font-size="64" font-weight="700">九顿 · 下潜</text>
+  <text x="72" y="568" fill="#5fd0d6" font-family="ui-monospace, monospace" font-size="22" letter-spacing="4">JIUDUN CAVE DIVE SIMULATOR</text>
+  <g font-family="ui-monospace, monospace" font-size="18" fill="#cfe6e8"><text x="1080" y="150">0 m</text><text x="1080" y="350">40 m</text><text x="1080" y="600">120 m</text></g>
+</svg>

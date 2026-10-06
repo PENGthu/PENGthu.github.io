@@ -10,6 +10,13 @@ feature_row:
     url: /games/spire-reforged/
     btn_label: "开始游戏"
     btn_class: "btn--success"
+  - image_path: games/jiudun-dive.svg
+    alt: "九顿 · 下潜 洞穴剖面"
+    title: "九顿 · 下潜 · Jiudun Cave Dive"
+    excerpt: "以广西都安九顿天窗为原型的洞穴潜水模拟：沿引导绳穿过 40 米洞口与狭窄竖井，管理混合气、减压与氧分压，活着回到天窗水面。基于 Bühlmann ZHL-16C 减压模型，仅供娱乐。"
+    url: /games/jiudun-dive/
+    btn_label: "开始下潜"
+    btn_class: "btn--success"
 ---
 
 {% include base_path %}
