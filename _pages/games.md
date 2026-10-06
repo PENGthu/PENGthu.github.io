@@ -6,7 +6,7 @@ feature_row:
   - image_path: games/spire-reforged.jpg
     alt: "尖塔重铸 · Spire Reforged 战斗画面"
     title: "尖塔重铸 · Spire Reforged"
-    excerpt: "致敬《杀戮尖塔 2》的网页版卡牌构筑 Roguelike：五名原作角色加原创角色 Claude（小克）、三幕地图、先古之民、附魔与苦难。支持电脑与手机，进度保存在本机，也可登录 Google 或邮箱账号同步到云端。"
+    excerpt: "致敬《杀戮尖塔 2》的网页版卡牌构筑 Roguelike：五名原作角色加原创角色 Claude（小克，带三位专属首领），三幕地图采用原作的怪物阵容并附怪物图鉴，还有先古之民、附魔与苦难。支持电脑与手机，进度保存在本机，也可登录 Google 或邮箱账号同步到云端。"
     url: /games/spire-reforged/
     btn_label: "开始游戏"
     btn_class: "btn--success"
