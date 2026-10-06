@@ -17,7 +17,7 @@ feature_row:
     url: /games/jiudun-dive/
     btn_label: "开始下潜"
     btn_class: "btn--success"
-  - image_path: games/aotai-sim/assets/ridge.jpg
+  - image_path: games/aotai-sim.jpg
     alt: "鳌太 · 每一步的雪山与云海"
     title: "鳌太 · 每一步 · 风雪之间"
     excerpt: "山地生存与分支故事模拟：逐件采购装备，管理体力、保温和补给，为每一步做出决定。三种故事情境，支持自动存档、决策回溯与结局复盘。沉浸式山景界面，适配电脑和手机。"
