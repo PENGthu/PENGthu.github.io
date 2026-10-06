@@ -78,6 +78,10 @@ $('fullscreen').addEventListener('click',async()=>{
   } catch { status('此浏览器不支持全屏'); }
   player.focus();
 });
+$('exit-fullscreen').addEventListener('click',async()=>{
+  if (document.fullscreenElement) await document.exitFullscreen();
+  player?.focus();
+});
 $('help').addEventListener('click',()=>{
   resumeAfterGuide = Boolean(api && !paused);
   if (resumeAfterGuide) setPaused(true);
