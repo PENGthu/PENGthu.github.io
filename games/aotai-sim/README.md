@@ -28,7 +28,7 @@ python3 -m http.server 8765 --bind 127.0.0.1
 打开 `http://127.0.0.1:8765/games/aotai-sim/`。ES modules 需要 HTTP 服务。
 
 ```sh
-node --test games/aotai-sim/engine.test.mjs games/aotai-sim/app.test.mjs games/aotai-sim/ui.test.mjs
+node --test games/aotai-sim/*.test.mjs
 ```
 
 规则测试覆盖预算、负重、不可变状态、条件选项、耗材、延迟病痛、路线与回溯、互信、救援时限、存档，以及完整故事。页面启动检查使用 DOM 替身核对 HTML 与模块之间的连接，不代替真实浏览器视觉检查。

@@ -1,9 +1,9 @@
 import {createGame,step,getActions,weatherAt,forecast,nodeAt,weightOf,timeLabel,riskLevel,questLabel,conditionLabel,validateSave,cartSummary,clamp} from './engine.mjs?v=2';
 import {SCENARIOS,BACKPACKS,ITEMS,PRESETS,NODES,EVENTS,CATEGORIES,ACHIEVEMENTS} from './data.mjs?v=2';
-import {layoutFor,pageSlice} from './ui.mjs?v=11';
-import {icon,gearIcon} from './icons.mjs?v=11';
-import {sceneFor,sceneKey,replyFor,BACKDROPS} from './scenes.mjs?v=11';
-import {theatreMarkup,transcriptMarkup} from './cinema.mjs?v=11';
+import {layoutFor,pageSlice} from './ui.mjs?v=12';
+import {icon,gearIcon} from './icons.mjs?v=12';
+import {sceneFor,sceneKey,replyFor,BACKDROPS} from './scenes.mjs?v=12';
+import {theatreMarkup,transcriptMarkup} from './cinema.mjs?v=12';
 
 const $=id=>document.getElementById(id);
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

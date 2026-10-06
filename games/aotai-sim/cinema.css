@@ -14,3 +14,13 @@
 .full-cinema .scene-actor.standing img{width:100%;max-width:none;object-fit:cover;object-position:center top;height:140%;top:0;right:0}
 .full-cinema .scene-actor.seated img{width:110%;height:100%;max-width:none;object-fit:cover;object-position:65% top;right:0}
 @media(max-width:760px){.scene-actor.standing img{height:148%;width:100%;right:0;top:0}.full-cinema .scene-actor.standing img{height:130%;width:100%;right:0;top:0}}
+/* The image fills the scene itself, keeping its subject above the action panel. */
+.landscape{container-type:size;container-name:story-stage}
+.cinema-stage:before{content:"";position:absolute;inset:0;z-index:0;background:linear-gradient(0deg,#07110a70,transparent 80%),var(--cinema-image);background-size:cover;background-position:var(--cinema-focus,center 55%)}
+.backdrop-camp{--cinema-focus:right 70%}.backdrop-river{--cinema-focus:right 78%}.backdrop-takin{--cinema-focus:right 43%}.backdrop-lake{--cinema-focus:center 67%}.backdrop-hut{--cinema-focus:center 55%}.backdrop-fog{--cinema-focus:right 63%}
+.full-cinema:before{background:linear-gradient(0deg,#07110a70,transparent 80%),var(--cinema-image);background-size:cover;background-position:var(--cinema-focus,center 55%)}
+.landscape.night .cinema-stage:before{filter:brightness(.62) saturate(.7)}
+.landscape.storm .cinema-stage:before{filter:brightness(.72) saturate(.45)}
+@container story-stage (max-height:270px){.cinema-caption{display:none}.scene-header h2{font-size:22px;margin:1px 0 3px}.scene-header .eyebrow{font-size:8px}.scene-header #location-detail{font-size:9px}.dialogue-card{bottom:17px;padding:10px 12px 8px}.dialogue-text{font-size:12px;line-height:1.7;margin:7px 0 6px;-webkit-line-clamp:2}.dialogue-speaker{min-height:19px}.speaker-badge{width:19px;height:19px}.dialogue-controls{padding-top:5px}}
+@container story-stage (max-height:190px){.scene-header .eyebrow,.scene-header #location-detail{display:none}.scene-header h2{font-size:18px}.dialogue-card{bottom:5px;padding:8px 9px 6px}.dialogue-text{font-size:10px;line-height:1.6;margin:5px 0}.dialogue-controls{padding-top:4px}.dialogue-controls button{font-size:7px;padding:3px 4px}.dialogue-speaker>small{display:none}.speaker-badge{width:16px;height:16px;font-size:8px}.dialogue-speaker b{font-size:9px}.dialogue-count{font-size:7px}.dialogue-speaker{min-height:16px}}
+@media(min-width:761px) and (max-height:790px){.status-panel .hud-summary>div{padding:4px}.status-panel .route-progress{margin-top:6px;margin-bottom:6px}.status-panel .stats{gap:6px}}
