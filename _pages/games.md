@@ -3,12 +3,12 @@ permalink: /games/
 title: "Games"
 author_profile: true
 feature_row:
-  - image_path: games/deep-light.svg
-    alt: "地心寻光 · 复古像素挖矿冒险"
-    title: "地心寻光 · Deep Light"
-    excerpt: "致敬 2009 年《挖地小子》玩法的原创像素冒险：挖矿卖矿，升级钻头、氧气瓶与矿袋，带上炸弹和回城信标深入四层矿区。找到三枚地心晶核，击败守卫，把失联的伙伴带回光里。支持键盘与手机触屏，浏览器自动存档，无需 Flash。"
+  - image_path: games/digger-boy.jpg
+    alt: "挖地小子 · 空 原版标题画面"
+    title: "挖地小子 · 空"
+    excerpt: "2009 年童年游戏的原版内容：熟悉的卡通画面、中文剧情、地图、矿石、装备升级、道具、怪物与双结局。原作直接在现代浏览器中运行，修复本机存档，方向键挖掘，A / S / D / F / G 使用道具，无需 Flash。"
     url: /games/deep-light/
-    btn_label: "点亮头灯"
+    btn_label: "开始挖掘"
     btn_class: "btn--success"
   - image_path: games/spire-reforged.jpg
     alt: "尖塔重铸 · Spire Reforged 战斗画面"
