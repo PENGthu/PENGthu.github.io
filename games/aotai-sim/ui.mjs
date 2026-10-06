@@ -3,12 +3,12 @@ export function layoutFor(width=1440,height=900){
   const compact=width<=760||height<820;
   return {
     choices:compact?2:4,
-    shop:height<540?2:width>=1100&&height>=760?6:4,
+    shop:width<=760?(height<720?2:height<850?3:4):height<540?2:width>=1100&&height>=760?6:4,
     utilities:height<620?4:8,
     bag:Math.max(2,Math.min(width<=760?4:6,Math.floor((height-210)/78))),
-    journal:compact?2:4,
-    achievements:compact?2:4,
-    feedback:compact?3:5,
+    journal:height<450?1:compact?2:4,
+    achievements:height<450?1:compact?2:4,
+    feedback:height<450?2:compact?3:5,
     scenarios:width<=760?1:3,
     backpacks:width<=760?1:3
   };

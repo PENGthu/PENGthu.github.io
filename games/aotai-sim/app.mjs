@@ -1,6 +1,7 @@
 import {createGame,step,getActions,weatherAt,forecast,nodeAt,weightOf,timeLabel,riskLevel,questLabel,conditionLabel,validateSave,cartSummary,clamp} from './engine.mjs?v=2';
 import {SCENARIOS,BACKPACKS,ITEMS,PRESETS,NODES,EVENTS,CATEGORIES,ACHIEVEMENTS} from './data.mjs?v=2';
-import {layoutFor,pageSlice} from './ui.mjs?v=3';
+import {layoutFor,pageSlice} from './ui.mjs?v=8';
+import {icon,gearIcon} from './icons.mjs?v=8';
 
 const $=id=>document.getElementById(id);
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -39,7 +40,7 @@ function renderHelp(){
 function duration(mins){return mins===0?'不耗时':mins<60?`${mins} 分钟`:`${+(mins/60).toFixed(1)} 小时`;}
 function meter(key){
   const value=Math.round(state[key]);
-  return `<div class="stat" data-key="${key}"><div class="stat-top"><span>${metricNames[key]}</span><b>${value}<small>/100</small></b></div><div class="stat-track" role="meter" aria-label="${metricNames[key]}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${value}"><div class="stat-fill ${value<20?'critical':value<40?'bad':''}" style="width:${value}%"></div></div></div>`;
+  return `<div class="stat" data-key="${key}"><div class="stat-top"><span>${icon(key)}${metricNames[key]}</span><b>${value}<small>/100</small></b></div><div class="stat-track" role="meter" aria-label="${metricNames[key]}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${value}"><div class="stat-fill ${value<20?'critical':value<40?'bad':''}" style="width:${value}%"></div></div></div>`;
 }
 function renderRoute(){
   $('route-list').innerHTML=NODES.map(n=>`<div class="route-stop ${state.visited.includes(n.id)?'visited':''} ${state.node===n.id?'current':''} ${n.branch?'branch':''}"><i></i><b>${n.name}</b><small>${n.alt.toLocaleString()} m${n.water?' · 水源':''}</small></div>`).join('');
@@ -57,6 +58,7 @@ function renderScene(){
   $('clock').textContent=timeLabel(state);$('turn-label').textContent=`第 ${String(state.turn+1).padStart(2,'0')} 步 · ${state.quest?.status==='waiting'?`待报告 ${Math.max(0,Math.ceil(state.quest.deadline-state.clock))} 小时`:`种子 ${state.seed}`}`;
   $('chapter-number').textContent=`CHAPTER ${String(index+1).padStart(2,'0')} / ${state.returning?'归途':loc.chapter}`;
   $('location-name').textContent=loc.name;$('location-detail').textContent=`海拔 ${loc.alt.toLocaleString()} m · ${state.returning?'沿已确认的来路撤回':'虚构山地故事'}`;
+  $('scene-bg').className=`scene-bg ${loc.scene} ${w.night?'night':''} ${w.inStorm?'storm':''}`;
   $('landscape').className=`landscape ${loc.scene} ${w.night?'night':''} ${w.inStorm?'storm':''}`;
   $('weather-badge').innerHTML=`<span>${w.icon}</span><div><b>${w.kind}</b>${w.temp}°C · ${w.night?'夜间':'白昼'}</div>`;
   $('terrain-label').textContent=loc.shelter>.6?'地形有较多遮蔽':loc.shelter>.25?'部分遮蔽，仍会暴露':'开阔地形，风雨影响更大';
@@ -69,6 +71,7 @@ function renderStory(){
   $('event-category').textContent=`${loc.name} · `+(state.outcome?'本次结局':state.rescue?'救援 / 守住定位点':state.returning?'归途 / 撤离也是选择':event?event.category:'行进 / 下一段路');
   $('event-count').textContent=state.outcome?`${state.turn} 个决定`:event?`${event.choices.length} 个选项`:'先观察，再动身';
   const hikerExpired=state.event==='hiker'&&state.quest?.status==='failed';
+  $('story-title').className=['takin','storm','injury','fog','hypothermia','hallucination'].includes(state.event)?'danger':'';
   $('story-title').textContent=state.outcome?state.outcome.title:state.rescue?'你已经把位置送了出去':hikerExpired?'等不到的回应':event?event.title:loc.chapter;
   $('story-text').textContent=state.outcome?state.outcome.text:state.rescue?'等待不是暂停。气温、饥饿和疲劳仍会变化。用背包里的物资维持状态，在这里等救援接近。':hikerExpired?'时间超过了他可以等待的窗口。你需要带回位置与这段消息。回看此前的停留和物资准备，可以从找到他之前重新选择。':event?event.text:loc.text;
   $('story-full-title').textContent=$('story-title').textContent;
@@ -83,7 +86,7 @@ function renderStory(){
   if(state.warmth<30)chips.push('保温状态偏低');if(state.energy<25)chips.push('体力正在吃紧');
   $('story-context').innerHTML=chips.map(c=>`<span class="context-chip ${c.includes('剩余')||c.includes('偏低')?'urgent':''}">${esc(c)}</span>`).join('');
   const p=paginate('choices',main);
-  $('choices').innerHTML=state.outcome?'<button class="outline-button" data-result>查看结局与成就 ↗</button>':state.rescue?'<button class="outline-button" data-open="action-dialog">打开休整面板，等待与补给 →</button>':p.items.map((a,i)=>`<button type="button" class="choice ${selected===a.id?'selected':''}" data-main="${a.id}" aria-pressed="${selected===a.id}" ${a.disabled?'disabled':''}><span class="choice-number">${a.disabled?'·':p.start+i+1}</span><div><strong>${esc(a.title)}</strong><p>${esc(a.disabled||a.desc)}</p></div><span class="choice-time">${duration(a.minutes)}</span></button>`).join('');
+  $('choices').innerHTML=state.outcome?'<button class="outline-button" data-result>查看结局与成就 ↗</button>':state.rescue?'<button class="outline-button" data-open="action-dialog">打开休整面板，等待与补给 →</button>':p.items.map((a,i)=>`<button type="button" class="choice ${selected===a.id?'selected':''}" data-main="${a.id}" title="${esc(a.disabled||a.desc)}" aria-pressed="${selected===a.id}" ${a.disabled?'disabled':''}><span class="choice-number">${a.disabled?'·':p.start+i+1}</span><div><strong>${esc(a.title)}</strong><p>${esc(a.disabled||a.desc)}</p></div><span class="choice-time">${duration(a.minutes)}</span></button>`).join('');
   pager('choice-pagination','choices',p);
   $('commit-button').hidden=!!state.outcome||!!state.rescue;
   $('commit-button').disabled=!started||!selected;
@@ -93,10 +96,13 @@ function renderStory(){
   pager('utility-pagination','utilities',utilityPage);
   $('quick-items').innerHTML=['ration','water','snack','meal','med','warmer'].map(id=>{
     const a=actions.find(a=>a.id===`use:${id}`),n=state.inventory[id]||0;
-    return `<button class="quick-item" data-do="use:${id}" ${!a||a.disabled?'disabled':''} title="${esc(a?.disabled||ITEMS[id].desc)}">${ITEMS[id].icon} ${ITEMS[id].name.replace(' · 0.5 L','')}<b>×${n}</b></button>`;
+    return `<button class="quick-item" data-do="use:${id}" ${!a||a.disabled?'disabled':''} title="${esc(a?.disabled||ITEMS[id].desc)}">${gearIcon(id)} ${ITEMS[id].name.replace(' · 0.5 L','')}<b>×${n}</b></button>`;
   }).join('');
 }
 function renderStatus(){
+  const loc=nodeAt(state),route=NODES.filter(n=>!n.branch);
+  $('route-progress').innerHTML=route.map(n=>`<span class="${n.id===state.node?'current':state.visited.includes(n.id)?'visited':''}" title="${n.name}"><i></i></span>`).join('')+`<small>${loc.name}</small>`;
+  $('hud-summary').innerHTML=[[icon('coin'),'剩余预算',`¥${state.money.toLocaleString()}`],[icon('mountain'),'当前海拔',`${loc.alt.toLocaleString()} m`],[icon('weight'),'当前负重',`${weightOf(state).toFixed(1)} kg`],[icon('signal'),'定位通信',loc.signal?'有信号':state.inventory.satellite?'卫星可用':'无信号']].map(([i,label,value])=>`<div>${i}<span>${label}<b>${value}</b></span></div>`).join('');
   $('stats').innerHTML=['health','energy','warmth','san','satiety','hydration'].map(meter).join('');
   const risk=riskLevel(state);$('risk-badge').textContent=risk.name;$('risk-badge').className=`risk-badge level-${risk.level}`;
   $('minor-stats').innerHTML=[['wetness','湿衣'],['battery','电量'],['durability','完整度']].map(([key,label])=>`<div>${label}<b>${Math.round(state[key])}%</b></div>`).join('');
@@ -108,6 +114,7 @@ function renderStatus(){
   $('rescue-status').innerHTML=state.rescue?`<b>◎ 救援已建立</b>守住${nodeAt(state).name}定位点<br>预计剩余 ${Math.ceil(state.rescue.remaining)} 个游戏小时`:'';
   $('forecast').innerHTML=forecast(state).map(w=>`<div class="forecast-row"><span>约 ${w.hours} 小时后</span><b>${w.icon} ${w.kind}</b><span>${w.temp}°C</span></div>`).join('');
   $('route-forecast').innerHTML=$('forecast').innerHTML;
+  $('condition-content').innerHTML=`<div class="stats">${$('stats').innerHTML}</div><div class="minor-stats">${$('minor-stats').innerHTML}</div><div class="conditions">${$('conditions').innerHTML}</div><div class="resources">${$('resources').innerHTML}</div><div class="weight-line">${$('weight-line').innerHTML}</div><div class="forecast">${$('forecast').innerHTML}</div>`;
   $('action-condition').textContent=`${timeLabel(state)} · 生命 ${Math.round(state.health)} / 体力 ${Math.round(state.energy)} / 保温 ${Math.round(state.warmth)} · 饱腹 ${Math.round(state.satiety)} / 补水 ${Math.round(state.hydration)}`;
 }
 function deltaMarkup(report){
@@ -139,7 +146,7 @@ function renderBag(){
   const p=paginate('bag',Object.entries(ITEMS).filter(([id])=>(state.inventory[id]||0)>0));
   $('bag-items').innerHTML=p.items.map(([id,item])=>{
       const a=actions.find(a=>a.id===`use:${id}`),drop=actions.find(a=>a.id===`drop:${id}`);
-      return `<div class="bag-row"><span class="item-icon">${item.icon}</span><div class="bag-info"><button class="item-name" data-item="${id}">${item.name} ⓘ</button><p>${item.desc} · ${item.weight} kg / 件</p></div><div class="bag-controls"><span>×${state.inventory[id]}</span>${item.usable?`<button class="bag-use" data-do="use:${id}" ${!a||a.disabled?'disabled':''} title="${esc(a?.disabled||'')}">使用</button>`:'<span class="subtle">已携带</span>'}<button class="bag-drop" data-do="drop:${id}" ${!drop?'disabled':''}>放弃</button></div></div>`;
+      return `<div class="bag-row"><span class="item-icon">${gearIcon(id)}</span><div class="bag-info"><button class="item-name" data-item="${id}">${item.name} ⓘ</button><p>${item.desc} · ${item.weight} kg / 件</p></div><div class="bag-controls"><span>×${state.inventory[id]}</span>${item.usable?`<button class="bag-use" data-do="use:${id}" ${!a||a.disabled?'disabled':''} title="${esc(a?.disabled||'')}">使用</button>`:'<span class="subtle">已携带</span>'}<button class="bag-drop" data-do="drop:${id}" ${!drop?'disabled':''}>放弃</button></div></div>`;
   }).join('')||'<p class="subtle">背包已经空了。</p>';
   pager('bag-pagination','bag',p);
   if(state.cargo||state.emptyBatteries)$('bag-summary').textContent+=` · 垃圾 ${state.cargo.toFixed(1)} kg / 空电源 ${state.emptyBatteries} 件`;
@@ -185,18 +192,18 @@ function renderSetup(){
   $('prep-back').hidden=prepStep===0;$('prep-next').hidden=prepStep===2;$('start-button').hidden=prepStep!==2;
   $('prep-next').textContent=prepStep===0?'选择背包 →':'准备物资 →';
   const scenarios=paginate('scenarios',Object.entries(SCENARIOS));
-  $('scenario-options').innerHTML=scenarios.items.map(([id,s])=>`<button type="button" class="scenario-option ${id===scenario?'selected':''}" data-scenario="${id}" aria-pressed="${id===scenario}"><span class="option-tag">${s.tag}</span><strong>${s.name}</strong><p>${s.desc}</p></button>`).join('');
+  $('scenario-options').innerHTML=scenarios.items.map(([id,s])=>`<button type="button" class="scenario-option ${id===scenario?'selected':''}" data-scenario="${id}" aria-pressed="${id===scenario}"><span class="scenario-visual scenario-${id}">${icon(id==='snow'?'snow':id==='search'?'signal':'compass')}</span><span class="option-tag">${s.tag}</span><strong>${s.name}</strong><p>${s.desc}</p></button>`).join('');
   pager('scenario-pagination','scenarios',scenarios);
   const backpacks=paginate('backpacks',Object.entries(BACKPACKS));
-  $('backpack-options').innerHTML=backpacks.items.map(([id,p])=>`<button type="button" class="backpack-option ${id===cart.backpack?'selected':''}" data-backpack="${id}" aria-pressed="${id===cart.backpack}"><span class="backpack-icon">▱</span><div><strong>${p.name}</strong><small>¥${p.price.toLocaleString()} · ${p.weight} kg</small></div><b>${p.capacity}<small>kg</small></b></button>`).join('');
+  $('backpack-options').innerHTML=backpacks.items.map(([id,p])=>`<button type="button" class="backpack-option ${id===cart.backpack?'selected':''}" data-backpack="${id}" aria-pressed="${id===cart.backpack}"><span class="backpack-icon">${gearIcon(id)}</span><div><strong>${p.name}</strong><small>¥${p.price.toLocaleString()} · ${p.weight} kg</small><p>${p.desc}</p></div><b>${p.capacity}<small>kg</small></b></button>`).join('');
   pager('backpack-pagination','backpacks',backpacks);
   $('presets').innerHTML=Object.entries(PRESETS).map(([id,p])=>`<button class="preset-button" type="button" data-preset="${id}">${p.name}</button>`).join('');
-  $('shop-tabs').innerHTML=CATEGORIES.map(([id,name])=>`<button class="shop-tab ${id===category?'selected':''}" data-category="${id}" aria-pressed="${id===category}">${name}</button>`).join('');
+  $('shop-tabs').innerHTML=CATEGORIES.map(([id,name])=>`<button class="shop-tab ${id===category?'selected':''}" data-category="${id}" aria-pressed="${id===category}">${icon({wear:'health',camp:'camp',tools:'compass',supplies:'backpack'}[id])}${name}<span>${Object.entries(ITEMS).filter(([key,item])=>item.category===id).reduce((sum,[key])=>sum+(cart.items[key]||0),0)}</span></button>`).join('');
   const p=paginate('shop',Object.entries(ITEMS).filter(([,item])=>item.category===category));
   $('shop-items').innerHTML=p.items.map(([id,item])=>{
     const n=cart.items[id]||0;
     const control=item.max===1?`<button class="equip-button ${n?'equipped':''}" data-equip="${id}" aria-pressed="${!!n}" ${!n&&!canAdd(id)?'disabled':''}>${n?'已装入 ✓':'装入背包 +'}</button>`:`<div class="quantity"><button data-cart="${id}" data-delta="-1" ${!n?'disabled':''} aria-label="减少${item.name}">−</button><span aria-label="${item.name}数量">${n}</span><button data-cart="${id}" data-delta="1" ${!canAdd(id)?'disabled':''} aria-label="增加${item.name}">＋</button></div>`;
-    return `<div class="shop-item"><div class="shop-item-head"><span class="item-icon">${item.icon}</span><h3><button class="item-name" data-item="${id}">${item.name} ⓘ</button></h3><small>${item.weight} kg</small></div><p>${item.desc}</p><div class="shop-item-bottom"><span><small>¥</small>${item.price.toLocaleString()}</span>${control}</div></div>`;
+    return `<div class="shop-item ${n?'packed':''}"><span class="item-icon">${gearIcon(id)}</span><div class="shop-item-info"><div class="shop-item-head"><h3><button class="item-name" data-item="${id}">${item.name}</button></h3><small>${item.weight} kg</small></div><p>${item.desc}</p><span class="item-price">${icon('coin')}${item.price.toLocaleString()}</span></div><div class="shop-item-controls">${control}</div></div>`;
   }).join('');
   pager('shop-pagination','shop',p);
   $('packing-list').innerHTML=CATEGORIES.map(([cat,name])=>{
@@ -220,7 +227,7 @@ function renderSetup(){
 function openSetup(fresh=false){
   if(fresh)$('seed-input').value=randomSeed();
   prepStep=0;
-  $('close-setup').hidden=!started;renderSetup();openDialog('setup-dialog');
+  $('close-setup').hidden=false;renderSetup();openDialog('setup-dialog');
 }
 function setPrepStep(value){
   prepStep=clamp(Number(value),0,2);
@@ -233,11 +240,11 @@ function start(){
   try{state=createGame({scenario,backpack:cart.backpack,items:cart.items,seed:$('seed-input').value});}
   catch(e){toast(e.message);return;}
   history=[];branch=null;lastReport=null;selected='';started=true;feedbackReport=null;Object.keys(pages).forEach(key=>pages[key]=0);
-  $('setup-dialog').close();save();render();
+  $('setup-dialog').close();$('home-dialog').close();save();render();
 }
 function resume(){
   if(!saved)return;state=structuredClone(saved.state);history=structuredClone(saved.history);branch=saved.branch||null;
-  lastReport=history.at(-1)?.report||null;started=true;selected='';$('setup-dialog').close();render();
+  lastReport=history.at(-1)?.report||null;started=true;selected='';$('setup-dialog').close();$('home-dialog').close();render();
   if(state.outcome)showResult();
 }
 function exportRun(){
@@ -250,7 +257,7 @@ $('prep-next').addEventListener('click',()=>setPrepStep(prepStep+1));
 $('prep-back').addEventListener('click',()=>setPrepStep(prepStep-1));
 $('commit-button').addEventListener('click',()=>execute());
 $('restart-button').addEventListener('click',()=>openSetup(true));
-$('close-setup').addEventListener('click',()=>$('setup-dialog').close());
+$('close-setup').addEventListener('click',()=>{$('setup-dialog').close();if(!started)openHome();});
 $('setup-dialog').addEventListener('cancel',e=>{if(!started)e.preventDefault();});
 $('random-seed').addEventListener('click',()=>$('seed-input').value=randomSeed());
 $('bag-button').addEventListener('click',()=>openDialog('bag-dialog'));
@@ -305,4 +312,13 @@ document.addEventListener('keydown',e=>{
 });
 let resizeTimer;
 globalThis.addEventListener?.('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>{render();renderSetup();renderAchievements();renderHelp();if($('result-dialog').open)showResult();},120);});
-render();renderAchievements();renderHelp();openSetup();
+function openHome(){
+  $('home-resume').hidden=!saved;$('home-resume').innerHTML=`${icon('clock')}${saved?.state.outcome?'查看上次结局':'继续上次旅程'}`;openDialog('home-dialog');
+}
+$('home-start').addEventListener('click',()=>{$('home-dialog').close();openSetup();});
+$('home-resume').addEventListener('click',resume);
+$('home-archive').addEventListener('click',()=>{if(saved){resume();openDialog('journal-dialog');}else{renderAchievements();openDialog('achievements-dialog');}});
+$('home-link').addEventListener('click',e=>{e.preventDefault();openHome();});
+$('home-dialog').addEventListener('cancel',e=>{if(!started)e.preventDefault();});
+document.querySelectorAll('[data-icon]').forEach(el=>el.innerHTML=icon(el.dataset.icon));
+render();renderSetup();renderAchievements();renderHelp();openHome();

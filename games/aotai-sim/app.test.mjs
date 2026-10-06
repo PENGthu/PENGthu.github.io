@@ -16,9 +16,10 @@ test('the page bootstraps with a valid cart and rejects malformed stored data',a
   globalThis.document={getElementById(id){assert.ok(elements.has(id),`unknown DOM ID ${id}`);return elements.get(id);},addEventListener(){},querySelector(){return null;},querySelectorAll(){return [];}};
   globalThis.localStorage={getItem(){return '{broken JSON';},setItem(){}};
   await import('./app.mjs?bootstrap-test');
-  assert.ok(elements.get('setup-dialog').open);
+  assert.ok(elements.get('home-dialog').open);
+  assert.equal(elements.get('setup-dialog').open,false);
   assert.equal(elements.get('start-button').disabled,false);
-  assert.equal(elements.get('close-setup').hidden,true);
+  assert.equal(elements.get('close-setup').hidden,false);
   assert.equal(elements.get('resume-panel').hidden,true);
   assert.match(elements.get('cart-money').textContent,/821/);
   assert.match(elements.get('story-title').textContent,/寻人/);
@@ -39,13 +40,16 @@ test('small-window preparation and navigation preserve every item and the game c
   globalThis.localStorage={getItem(){return null;},setItem(){}};
   await import('./app.mjs?compact-flow-test');
   const click=dataset=>events.click({target:{closest(){return {disabled:false,dataset};}}});
+  elements.get('home-start').events.click();
+  assert.equal(elements.get('home-dialog').open,false);
+  assert.equal(elements.get('setup-dialog').open,true);
   assert.equal((elements.get('scenario-options').innerHTML.match(/data-scenario=/g)||[]).length,1);
   elements.get('prep-next').events.click();assert.equal(elements.get('prep-backpack').hidden,false);
   assert.match(elements.get('backpack-options').innerHTML,/远行背包/,'default selected backpack stays visible');
   elements.get('prep-next').events.click();assert.equal(elements.get('prep-equipment').hidden,false);assert.equal(elements.get('start-button').hidden,false);
   click({category:'supplies'});
   const seen=new Set();
-  for(let page=0;page<3;page++){
+  for(let page=0;page<5;page++){
     click({page:'shop',index:String(page)});
     for(const [,id] of elements.get('shop-items').innerHTML.matchAll(/data-item="([^"]+)"/g))seen.add(id);
   }
