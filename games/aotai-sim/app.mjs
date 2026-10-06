@@ -1,9 +1,10 @@
 import {createGame,step,getActions,weatherAt,forecast,nodeAt,weightOf,timeLabel,riskLevel,questLabel,conditionLabel,validateSave,cartSummary,clamp} from './engine.mjs?v=2';
 import {SCENARIOS,BACKPACKS,ITEMS,PRESETS,NODES,EVENTS,CATEGORIES,ACHIEVEMENTS} from './data.mjs?v=2';
-import {layoutFor,pageSlice} from './ui.mjs?v=12';
-import {icon,gearIcon} from './icons.mjs?v=12';
-import {sceneFor,sceneKey,replyFor,BACKDROPS} from './scenes.mjs?v=12';
-import {theatreMarkup,transcriptMarkup} from './cinema.mjs?v=12';
+import {layoutFor,pageSlice} from './ui.mjs?v=13';
+import {icon,gearIcon} from './icons.mjs?v=13';
+import {sceneFor,sceneKey,BACKDROPS} from './scenes.mjs?v=13';
+import {optionSceneFor} from './choice-scenes.mjs?v=13';
+import {theatreMarkup,transcriptMarkup,optionCardMarkup} from './cinema.mjs?v=13';
 
 const $=id=>document.getElementById(id);
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -71,7 +72,8 @@ function renderScene(){
 function renderStory(){
   const loc=nodeAt(state),event=state.event?EVENTS[state.event]:null,actions=getActions(state);
   const main=actions.filter(a=>a.kind==='choice'||a.kind==='travel');
-  if(!main.some(a=>a.id===selected&&!a.disabled))selected='';
+  if(!actions.some(a=>a.id===selected))selected='';
+  const selectedAction=actions.find(a=>a.id===selected);
   $('event-category').textContent=`${loc.name} · `+(state.outcome?'本次结局':state.rescue?'救援 / 守住定位点':state.returning?'归途 / 撤离也是选择':event?event.category:'行进 / 下一段路');
   $('event-count').textContent=state.outcome?`${state.turn} 个决定`:event?`${event.choices.length} 个选项`:'先观察，再动身';
   const hikerExpired=state.event==='hiker'&&state.quest?.status==='failed';
@@ -91,33 +93,33 @@ function renderStory(){
   if(state.warmth<30)chips.push('保温状态偏低');if(state.energy<25)chips.push('体力正在吃紧');
   $('story-context').innerHTML=chips.map(c=>`<span class="context-chip ${c.includes('剩余')||c.includes('偏低')?'urgent':''}">${esc(c)}</span>`).join('');
   const p=paginate('choices',main);
-  $('choices').innerHTML=state.outcome?'<button class="outline-button" data-result>查看结局与成就 ↗</button>':state.rescue?'<button class="outline-button" data-open="action-dialog">打开休整面板，等待与补给 →</button>':p.items.map((a,i)=>`<button type="button" class="choice ${selected===a.id?'selected':''}" data-main="${a.id}" title="${esc(a.disabled||a.desc)}" aria-pressed="${selected===a.id}" ${a.disabled?'disabled':''}><span class="choice-number">${a.disabled?'·':p.start+i+1}</span><div><strong>${esc(replyFor(state,a)?`“${replyFor(state,a)}”`:a.title)}</strong><p>${esc(a.disabled||(replyFor(state,a)?`${a.title} · ${a.desc}`:a.desc))}</p></div><span class="choice-time">${duration(a.minutes)}</span></button>`).join('');
+  $('choices').innerHTML=state.outcome?'<button class="outline-button" data-result>查看结局与成就 ↗</button>':state.rescue?'<button class="outline-button" data-open="action-dialog">打开休整面板，选择等待与补给情境 →</button>':p.items.map((a,i)=>optionCardMarkup(a,optionSceneFor(state,a),p.start+i+1,selected===a.id,duration(a.minutes))).join('');
   pager('choice-pagination','choices',p);
-  $('commit-button').hidden=!!state.outcome||!!state.rescue;
-  $('commit-button').disabled=!started||!selected;
-  $('selected-label').textContent=state.rescue?'在休整面板中等待、补给与保温':selected?actions.find(a=>a.id===selected).title:'选择上面的一个决定';
+  $('commit-button').hidden=!!state.outcome||!!state.rescue&&!selectedAction;
+  $('commit-button').disabled=!started||!selectedAction||!!selectedAction.disabled;
+  $('selected-label').textContent=selectedAction?.disabled?`条件不足：${selectedAction.disabled}`:selectedAction?selectedAction.title:state.rescue?'在休整面板中选择等待、补给与保温':'选择一个选项，查看具体情境';
   const utilityPage=paginate('utilities',actions.filter(a=>a.kind==='utility'));
-  $('utilities').innerHTML=utilityPage.items.map(a=>`<button class="utility-button" data-do="${a.id}" ${a.disabled?'disabled':''} title="${esc(a.disabled||a.desc)}">${utilitySymbols[a.id]||'◇'} ${esc(a.title)}<span>${esc(a.disabled||duration(a.minutes))}</span></button>`).join('');
+  $('utilities').innerHTML=utilityPage.items.map(a=>`<button class="utility-button ${a.disabled?'unavailable':''}" data-do="${a.id}" title="${esc(a.disabled||a.desc)}">${utilitySymbols[a.id]||'◇'} ${esc(a.title)}<span class="utility-vignette">${esc(optionSceneFor(state,a).summary)}</span><small>${esc(a.disabled||duration(a.minutes))} · 查看情境 →</small></button>`).join('');
   pager('utility-pagination','utilities',utilityPage);
   $('quick-items').innerHTML=['ration','water','snack','meal','med','warmer'].map(id=>{
     const a=actions.find(a=>a.id===`use:${id}`),n=state.inventory[id]||0;
-    return `<button class="quick-item" data-do="use:${id}" ${!a||a.disabled?'disabled':''} title="${esc(a?.disabled||ITEMS[id].desc)}">${gearIcon(id)} ${ITEMS[id].name.replace(' · 0.5 L','')}<b>×${n}</b></button>`;
+    return `<button class="quick-item" data-do="use:${id}" ${!a?'disabled':''} title="${esc(a?.disabled||ITEMS[id].desc)}">${gearIcon(id)} ${ITEMS[id].name.replace(' · 0.5 L','')}<b>×${n}</b></button>`;
   }).join('');
 }
 function renderTheatre(){
-  const key=sceneKey(state);
+  const key=`${sceneKey(state)}:${selected}`;
   if(key!==dramaKey){dramaKey=key;dialogueCursor=0;observed=new Set();pages.transcript=0;}
-  const scene=sceneFor(state),action=getActions(state).find(a=>a.id===selected&&!a.disabled);
-  const preview=action?(replyFor(state,action)||`${action.title}。${action.desc}`):null;
+  const action=getActions(state).find(a=>a.id===selected),scene=action?optionSceneFor(state,action):sceneFor(state);
+  const preview=action?true:null;
   dialogueCursor=Math.max(0,Math.min(dialogueCursor,scene.dialogue.length-1));
   $('scene-theatre').innerHTML=theatreMarkup(scene,dialogueCursor,preview,observed);
   $('scene-full').innerHTML=theatreMarkup(scene,dialogueCursor,preview,observed,true);
+  if(action){$('story-full-title').textContent=scene.title;$('story-full-text').textContent=`${action.title} · ${action.desc}${action.disabled?` · 条件不足：${action.disabled}`:''}。此情境尚未执行，阅读不会消耗时间或物资。`;}
   if($('transcript-dialog').open)renderTranscript();
 }
 function renderTranscript(){
-  const scene=sceneFor(state),action=getActions(state).find(a=>a.id===selected&&!a.disabled);
-  const lines=[...scene.dialogue];
-  if(action)lines.push({speaker:'你',kind:'尚未确认',text:replyFor(state,action)||`${action.title}。${action.desc}`});
+  const action=getActions(state).find(a=>a.id===selected),scene=action?optionSceneFor(state,action):sceneFor(state);
+  const lines=scene.dialogue;
   const p=pageSlice(lines,pages.transcript,(globalThis.innerHeight||900)<450?2:3);pages.transcript=p.page;
   $('transcript-lines').innerHTML=transcriptMarkup(p.items);pager('transcript-pagination','transcript',p);
 }
@@ -168,12 +170,16 @@ function renderBag(){
   const p=paginate('bag',Object.entries(ITEMS).filter(([id])=>(state.inventory[id]||0)>0));
   $('bag-items').innerHTML=p.items.map(([id,item])=>{
       const a=actions.find(a=>a.id===`use:${id}`),drop=actions.find(a=>a.id===`drop:${id}`);
-      return `<div class="bag-row"><span class="item-icon">${gearIcon(id)}</span><div class="bag-info"><button class="item-name" data-item="${id}">${item.name} ⓘ</button><p>${item.desc} · ${item.weight} kg / 件</p></div><div class="bag-controls"><span>×${state.inventory[id]}</span>${item.usable?`<button class="bag-use" data-do="use:${id}" ${!a||a.disabled?'disabled':''} title="${esc(a?.disabled||'')}">使用</button>`:'<span class="subtle">已携带</span>'}<button class="bag-drop" data-do="drop:${id}" ${!drop?'disabled':''}>放弃</button></div></div>`;
+      return `<div class="bag-row"><span class="item-icon">${gearIcon(id)}</span><div class="bag-info"><button class="item-name" data-item="${id}">${item.name} ⓘ</button><p>${item.desc} · ${item.weight} kg / 件</p></div><div class="bag-controls"><span>×${state.inventory[id]}</span>${item.usable?`<button class="bag-use" data-do="use:${id}" ${!a?'disabled':''} title="${esc(a?.disabled||'')}">使用情境</button>`:'<span class="subtle">已携带</span>'}<button class="bag-drop" data-do="drop:${id}" ${!drop?'disabled':''}>放弃情境</button></div></div>`;
   }).join('')||'<p class="subtle">背包已经空了。</p>';
   pager('bag-pagination','bag',p);
   if(state.cargo||state.emptyBatteries)$('bag-summary').textContent+=` · 垃圾 ${state.cargo.toFixed(1)} kg / 空电源 ${state.emptyBatteries} 件`;
 }
 function render(){renderScene();renderRoute();renderStory();renderStatus();renderFeedback();renderJournal();renderBag();}
+function selectAction(id){
+  if(!started||!getActions(state).some(a=>a.id===id))return;
+  selected=id;closePanels();renderStory();
+}
 function execute(id=selected){
   if(!started||state.outcome)return;
   const before=structuredClone(state),result=step(state,id);
@@ -295,9 +301,9 @@ document.addEventListener('click',e=>{
   if(d.dialogue!==undefined){dialogueCursor+=Number(d.dialogue)||0;renderTheatre();document.querySelector(`[data-dialogue="${d.dialogue}"]`)?.focus({preventScroll:true});}
   if('returnDialogue' in d){selected='';renderStory();}
   if('transcript' in d){pages.transcript=0;renderTranscript();openDialog('transcript-dialog');}
-  if(d.hotspot!==undefined){const scene=sceneFor(state),index=Number(d.hotspot),point=scene.observations[index];if(point){observed.add(index);$('observation-title').textContent=point.title;$('observation-text').textContent=point.text;renderTheatre();openDialog('observation-dialog');}}
-  if(d.main){selected=d.main;renderStory();document.querySelector(`[data-main="${selected}"]`)?.focus({preventScroll:true});}
-  if(d.do)execute(d.do);
+  if(d.hotspot!==undefined){const action=getActions(state).find(a=>a.id===selected),scene=action?optionSceneFor(state,action):sceneFor(state),index=Number(d.hotspot),point=scene.observations[index];if(point){observed.add(index);$('observation-title').textContent=point.title;$('observation-text').textContent=point.text;renderTheatre();openDialog('observation-dialog');}}
+  if(d.main){selectAction(d.main);document.querySelector(`[data-main="${selected}"]`)?.focus({preventScroll:true});}
+  if(d.do){selectAction(d.do);$('commit-button').focus({preventScroll:true});}
   if(d.close)$(d.close).close();
   if(d.open){if(d.open==='feedback-dialog'){feedbackReport=null;pages.feedback=0;renderFeedback();}openDialog(d.open);}
   if(d.rewind!==undefined)rewind(Number(d.rewind));
@@ -331,7 +337,7 @@ document.addEventListener('keydown',e=>{
   if(/INPUT|SELECT|TEXTAREA/.test(e.target.tagName)||document.querySelector('dialog[open]')||!started)return;
   if(/^[1-5]$/.test(e.key)){
     const a=getActions(state).filter(a=>a.kind==='choice'||a.kind==='travel')[Number(e.key)-1];
-    if(a&&!a.disabled){e.preventDefault();selected=a.id;pages.choices=Math.floor((Number(e.key)-1)/layout().choices);renderStory();$('commit-button').focus();}
+    if(a){e.preventDefault();pages.choices=Math.floor((Number(e.key)-1)/layout().choices);selectAction(a.id);$('commit-button').focus();}
   }
   if(e.key.toLowerCase()==='b'){e.preventDefault();openDialog('bag-dialog');}
   if(e.key.toLowerCase()==='r'&&!e.ctrlKey&&!e.metaKey){e.preventDefault();rewind(history.length-1);}

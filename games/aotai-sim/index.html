@@ -4,17 +4,18 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#090e0d">
-  <meta name="description" content="鳌太·每一步 4.0：采购装备、管理补给、探索分支故事。人物对话、现场观察与分支决策，让每一步改变后来的路。">
+  <meta name="description" content="鳌太·每一步 4.1：每个选项都有具体情境、动作和对白。先阅读行动设想，再确认决定，管理装备、补给与分支故事。">
   <title>鳌太 · 每一步｜风雪之间</title>
-  <link rel="stylesheet" href="./style.css?v=12">
-  <link rel="stylesheet" href="./cinema.css?v=12">
-  <script type="module" src="./app.mjs?v=12"></script>
+  <link rel="stylesheet" href="./style.css?v=13">
+  <link rel="stylesheet" href="./cinema.css?v=13">
+  <link rel="stylesheet" href="./options.css?v=13">
+  <script type="module" src="./app.mjs?v=13"></script>
 </head>
 <body>
   <div id="scene-bg" class="scene-bg forest" aria-hidden="true"></div>
   <div class="scene-shade" aria-hidden="true"></div>
   <header class="site-header">
-    <a class="brand" href="#" id="home-link" aria-label="返回主菜单"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="m3 31 13-23 8 14 5-8 9 17M11 17l5 4 4-5M24 22l5 3 3-5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span>鳌太 <em>／</em> 每一步<small>AOTAI · BETWEEN THE STORMS</small></span><b class="version">4.0</b></a>
+    <a class="brand" href="#" id="home-link" aria-label="返回主菜单"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="m3 31 13-23 8 14 5-8 9 17M11 17l5 4 4-5M24 22l5 3 3-5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span>鳌太 <em>／</em> 每一步<small>AOTAI · BETWEEN THE STORMS</small></span><b class="version">4.1</b></a>
     <nav aria-label="游戏工具"><button class="text-button mobile-tool" data-open="condition-dialog"><span data-icon="health"></span>状态</button><button class="text-button" data-open="action-dialog"><span data-icon="camp"></span>休整</button><button class="text-button" id="bag-button"><span data-icon="backpack"></span>背包</button><button class="text-button" data-open="journal-dialog"><span data-icon="journal"></span>复盘</button><button class="text-button desktop-tool" data-open="route-dialog"><span data-icon="compass"></span>路线</button><button class="text-button desktop-tool" id="achievements-button"><span data-icon="trophy"></span>成就</button><button class="text-button desktop-tool" id="help-button"><span data-icon="help"></span>玩法</button><button class="outline-button desktop-tool" id="restart-button">新的旅程 ↗</button><button class="text-button mobile-tool" data-open="menu-dialog">更多</button></nav>
   </header>
   <main>
@@ -49,7 +50,7 @@
 
   <dialog id="home-dialog" class="home-dialog" aria-labelledby="home-title">
     <div class="home-backdrop" aria-hidden="true"></div><div class="snowfall" aria-hidden="true"></div>
-    <div class="home-top"><span><span data-icon="mountain"></span> 一场关于选择的旅程</span><span>v4.0</span></div>
+    <div class="home-top"><span><span data-icon="mountain"></span> 一场关于选择的旅程</span><span>v4.1</span></div>
     <div class="home-content"><span class="home-eyebrow">AOTAI · BETWEEN THE STORMS</span><h1 id="home-title">鳌太 · 每一步</h1><div class="home-subtitle"><i></i><span>风 雪 之 间</span><i></i></div><p class="home-quote">“山里没有标准答案。<br>你能带回的，是每一个决定。”</p><div class="home-actions"><button class="primary-button home-start" id="home-start"><span data-icon="play"></span>开始新旅程</button><button class="outline-button" id="home-resume" hidden><span data-icon="clock"></span>继续上次旅程</button><button class="outline-button" id="home-archive"><span data-icon="journal"></span>我的旅程档案</button></div><div class="home-links"><button class="text-button" data-open="help-dialog">玩法说明</button><span>·</span><button class="text-button" data-achievements>成就档案</button><span>·</span><a href="https://cyberhiking.com/" target="_blank" rel="noopener">参考原作 ↗</a></div></div>
     <div class="home-bottom"><span>虚构山地故事 · 非真实导航或生存预测</span><span>选择 · 生存 · 回溯</span></div>
   </dialog>
@@ -68,7 +69,7 @@
   <dialog id="story-dialog" class="story-dialog"><div class="dialog-heading"><div><span class="eyebrow">THIS MOMENT</span><h2 id="story-full-title"></h2></div><button class="close-button" data-close="story-dialog" aria-label="关闭情境">×</button></div><div id="scene-full" class="scene-full"></div><p id="story-full-text"></p><button class="outline-button" data-close="story-dialog">回到决策 →</button></dialog>
   <dialog id="observation-dialog" class="observation-dialog"><div class="dialog-heading"><div><span class="eyebrow">观察现场 · 不消耗时间</span><h2 id="observation-title"></h2></div><button class="close-button" data-close="observation-dialog" aria-label="关闭观察">×</button></div><p id="observation-text"></p><button class="outline-button" data-close="observation-dialog">回到情境 →</button></dialog>
   <dialog id="transcript-dialog" class="transcript-dialog"><div class="dialog-heading"><div><span class="eyebrow">这段相遇</span><h2>对话与情境记录</h2></div><button class="close-button" data-close="transcript-dialog" aria-label="关闭对话记录">×</button></div><div id="transcript-lines"></div><div id="transcript-pagination" class="pagination" aria-label="对话记录分页"></div><p class="subtle">阅读对话与观察线索不消耗游戏时间。</p></dialog>
-  <dialog id="action-dialog" class="action-dialog"><div class="dialog-heading"><div><span class="eyebrow">TAKE A BREATH</span><h2>先照顾眼前的状态</h2></div><button class="close-button" data-close="action-dialog" aria-label="关闭休整面板">×</button></div><p id="action-condition" class="subtle" aria-live="polite"></p><div class="quick-items" id="quick-items"></div><div class="utilities" id="utilities"></div><div id="utility-pagination" class="pagination" aria-label="休整行动分页"></div><p class="subtle">补给、治疗和停留都计入时间。可以先准备，再决定。</p></dialog>
+  <dialog id="action-dialog" class="action-dialog"><div class="dialog-heading"><div><span class="eyebrow">TAKE A BREATH</span><h2>先照顾眼前的状态</h2></div><button class="close-button" data-close="action-dialog" aria-label="关闭休整面板">×</button></div><p id="action-condition" class="subtle" aria-live="polite"></p><div class="quick-items" id="quick-items"></div><div class="utilities" id="utilities"></div><div id="utility-pagination" class="pagination" aria-label="休整行动分页"></div><p class="subtle">点击先看具体情境，回到主画面确认后才执行；补给、治疗和停留都计入时间。</p></dialog>
   <dialog id="feedback-dialog" class="feedback-dialog"><div class="dialog-heading"><div><span class="eyebrow">THE CONSEQUENCE</span><h2>这一步的回声</h2></div><button class="close-button" data-close="feedback-dialog" aria-label="关闭反馈">×</button></div><div class="feedback-panel" id="feedback-panel"></div><div id="feedback-pagination" class="pagination" aria-label="反馈分页"></div></dialog>
   <dialog id="journal-dialog" class="journal-dialog"><section class="journal-section" id="journal-section"><div class="dialog-heading"><div><span class="eyebrow">YOUR FOOTPRINTS</span><h2>每一步，都有回声。</h2></div><button class="close-button" data-close="journal-dialog" aria-label="关闭复盘">×</button></div><div class="journal-tools"><button class="text-button" id="export-button">导出记录 ↗</button><button class="outline-button" id="undo-button">重选上一步 ↶</button></div><div id="branch-note"></div><div id="journal"></div><div id="journal-pagination" class="pagination" aria-label="记录分页"></div></section></dialog>
   <dialog id="bag-dialog" class="bag-dialog"><div class="dialog-heading"><div><span class="eyebrow">EVERY GRAM COUNTS</span><h2>背包里的选项</h2></div><button class="close-button" data-close="bag-dialog" aria-label="关闭背包">×</button></div><p class="subtle" id="bag-summary"></p><div id="bag-items"></div><div id="bag-pagination" class="pagination" aria-label="背包分页"></div><p class="subtle">装备自动生效。使用物品计入时间，放弃后本分支无法取回。</p></dialog>
@@ -76,7 +77,7 @@
   <dialog id="achievements-dialog" class="achievements-dialog"><div class="dialog-heading"><div><span class="eyebrow">STORIES YOU BROUGHT HOME</span><h2>那些留下的回声</h2></div><button class="close-button" data-close="achievements-dialog" aria-label="关闭成就">×</button></div><p class="subtle">成就保存在当前浏览器。</p><div id="achievement-list"></div><div id="achievement-pagination" class="pagination" aria-label="成就分页"></div></dialog>
   <dialog id="help-dialog" class="help-dialog"><div class="dialog-heading"><div><span class="eyebrow">HOW TO PLAY</span><h2>把每一步想清楚。</h2></div><button class="close-button" data-close="help-dialog" aria-label="关闭玩法">×</button></div><div id="help-pages">
     <section data-help-page="0"><h3>01 / 先配装</h3><p>预算 16,000 元，逐件购买。装备会自动生效，也会解锁事件选项。可以使用推荐配装，再自行调整。</p><p>出发准备分为故事、背包、物资三步。使用分类与分页按钮查看全部物品。</p></section>
-    <section data-help-page="1" hidden><h3>02 / 先观察</h3><p>事件选择、行进、扎营和补给都会消耗游戏时间。生命、体力、保温、精神、饱腹、补水互相影响。</p><p>背包里有口粮，不代表已经吃过。使用上方「休整」或「背包」按钮照顾身体。</p></section>
+    <section data-help-page="1" hidden><h3>02 / 先观察</h3><p>每个选项都有独立情境：点击查看准备做的动作、回应与眼前取舍。用「下一句」或「情境记录」读完，用「返回现场」取消选择。</p><p>阅读不消耗时间或物资。点击「做出决定」才执行；休整、使用与放弃物品也先看情境再确认。条件不足的选项可以查看，但无法执行。</p></section>
     <section data-help-page="2" hidden><h3>03 / 看后果</h3><p>某些病痛会延迟出现。地图、灯、炉具、燃料、医疗包和电量有不同用途。负重增加会让每一段更费力。</p><p>下方「本步反馈」显示变化与原因，长反馈可以分页查看。</p></section>
     <section data-help-page="3" hidden><h3>04 / 记住等待的人</h3><p>找到许舟后，留下物资、报告位置和救援接近是不同步骤。窗口耗尽后，之后的补救也无法改写这一段。</p><p>在路线面板中查看他的状态；重要的剩余时间也会出现在当前决策中。</p></section>
     <section data-help-page="4" hidden><h3>05 / 可以改变目标</h3><p>沿来路撤离和等待救援都是完整结局。等待期间仍要补给、保温并守住定位点。</p><p>需要时打开「休整」请求救援或决定撤离。</p></section>
