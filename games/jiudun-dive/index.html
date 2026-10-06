@@ -2,117 +2,138 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#04121a">
-  <meta name="description" content="九顿 · 下潜：以广西都安九顿天窗为原型的洞穴潜水模拟。管理气体、减压与氧分压，从水下珠峰活着回来。">
-  <title>九顿 · 下潜｜洞穴潜水模拟</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#071015">
+  <meta name="description" content="九顿 · 下潜：以广西都安九顿天窗为原型的 2D 洞穴潜水游戏。放线、摸线、别把泥踢起来，出事了就复盘。">
+  <title>九顿 · 下潜｜洞穴潜水</title>
   <link rel="stylesheet" href="./style.css">
   <script type="module" src="./app.mjs"></script>
 </head>
 <body>
-  <header class="site-header">
-    <a class="brand" href="../" aria-label="返回游戏列表"><svg viewBox="0 0 36 36" aria-hidden="true"><path d="M4 8h28M10 8c2 6 3 10 3 14s-1 7 0 10M26 8c-2 6-3 10-3 14s1 7 0 10" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="18" cy="24" r="2" fill="currentColor"/></svg><span>九顿 <i>／</i> 下潜<small>JIUDUN CAVE DIVE SIMULATOR</small></span></a>
-    <nav aria-label="游戏工具">
-      <button id="map-button" class="text-button" title="M">剖面图</button>
-      <button id="pause-button" class="text-button" title="P">暂停</button>
-      <button id="help-button" class="text-button">玩法与依据</button>
-      <button id="restart-button" class="outline-button">换计划</button>
-    </nav>
-  </header>
+  <canvas id="view" aria-label="洞穴剖面"></canvas>
 
-  <main class="game">
-    <section class="stage" aria-label="洞穴剖面">
-      <canvas id="view" aria-label="潜水员所在的洞穴剖面"></canvas>
-      <div class="stage-top">
-        <div class="readout"><span>深度</span><b id="depth">0.0</b><em>m</em></div>
-        <div class="readout"><span>时间</span><b id="runtime">0:00</b></div>
-        <div class="readout ceiling" id="ceiling-box"><span>减压</span><b id="ceiling">无</b></div>
-        <div class="readout"><span>出水</span><b id="tts">—</b></div>
+  <!-- In-dive HUD -->
+  <section id="hud" hidden>
+    <div class="computer" id="computer" aria-live="off"></div>
+    <div class="objectives" id="objectives"></div>
+    <div class="ticker" id="ticker"></div>
+    <div class="narration" id="narration" hidden></div>
+    <div class="prompts" id="prompts"></div>
+    <div class="warp" id="warp" hidden>呼吸放慢 · 时间 ×6</div>
+  </section>
+
+  <section id="touch" hidden>
+    <div class="stick-zone" id="stick-zone"><div class="stick" id="stick"><i></i></div></div>
+    <div class="touch-buttons">
+      <button data-hold="grip">抓线</button>
+      <button data-hold="fast">快游</button>
+      <button data-hold="calm">呼吸</button>
+      <button data-tap="M">地图</button>
+      <button data-tap="Escape">暂停</button>
+    </div>
+  </section>
+
+  <!-- Title -->
+  <section class="screen title" id="title">
+    <div class="title-card">
+      <span class="eyebrow">JIUDUN · DU'AN · GUANGXI</span>
+      <h1>九顿<span>·</span>下潜</h1>
+      <p class="sub">放线、摸线、别把泥踢起来。<br>出事了，就复盘。</p>
+      <ol class="missions" id="missions"></ol>
+      <div class="title-links">
+        <button class="link" id="help-open">操作说明</button>
+        <a class="link" href="../">返回游戏列表</a>
       </div>
-      <div class="toast" id="toast" hidden></div>
+      <p class="fine">虚构娱乐内容，不是潜水教学。洞穴潜水需要专门训练，九顿天窗曾发生多起致命事故。</p>
+    </div>
+  </section>
 
-      <div class="overlay" id="start-screen">
-        <div class="panel">
-          <span class="eyebrow">广西都安 · 大兴乡九顿屯</span>
-          <h1>水下珠峰，入口在 40 米。</h1>
-          <p class="lead">选择一份潜水计划。你要管理气体、减压和氧分压，然后回到天窗水面。</p>
-          <div class="plans" id="plans"></div>
-          <div class="start-row">
-            <button id="resume-button" class="outline-button" hidden>继续上次的潜水</button>
-            <button id="start-button" class="primary-button">下水</button>
-          </div>
-          <p class="fine">简化的 Bühlmann ZHL-16C + 梯度因子模型，淡水，海平面。洞穴剖面为示意，非真实测绘。<strong>本游戏不能用于真实潜水计划。</strong></p>
+  <!-- Briefing -->
+  <section class="screen brief" id="brief" hidden>
+    <div class="panel">
+      <button class="back" id="brief-back" aria-label="返回">←</button>
+      <span class="eyebrow" id="brief-tag"></span>
+      <h2 id="brief-name"></h2>
+      <p class="quote" id="brief-quote"></p>
+      <p id="brief-text"></p>
+      <div class="brief-grid">
+        <div><h3>装备</h3><ul id="brief-gear"></ul></div>
+        <div><h3>目标</h3><ol id="brief-goals"></ol></div>
+      </div>
+      <h3>技巧</h3>
+      <ul class="tips" id="brief-tips"></ul>
+      <div class="row"><button class="primary" id="dive-button">下水 <kbd>Enter</kbd></button></div>
+    </div>
+  </section>
+
+  <!-- Map -->
+  <section class="screen map" id="map" hidden>
+    <div class="panel">
+      <h2>测绘图 <small>只画出你到过的地方</small></h2>
+      <canvas id="map-canvas" width="420" height="640"></canvas>
+      <p class="fine">按 M 关闭 · 时间照常流动</p>
+    </div>
+  </section>
+
+  <!-- Pause -->
+  <section class="screen pause" id="pause" hidden>
+    <div class="panel narrow">
+      <h2>暂停</h2>
+      <button class="primary" id="resume">继续</button>
+      <button id="restart">重新下这一潜</button>
+      <button id="help-open-2">操作说明</button>
+      <button id="quit">放弃，回到任务列表</button>
+    </div>
+  </section>
+
+  <!-- Debrief -->
+  <section class="screen debrief" id="debrief" hidden>
+    <div class="panel wide">
+      <span class="eyebrow" id="db-eyebrow"></span>
+      <h2 id="db-title"></h2>
+      <p class="lead" id="db-text"></p>
+      <div class="db-grid">
+        <canvas id="db-map" width="360" height="560"></canvas>
+        <div>
+          <dl class="stats" id="db-stats"></dl>
+          <h3>时间线</h3>
+          <ol class="timeline" id="db-timeline"></ol>
+          <h3>检查</h3>
+          <ul class="checks" id="db-checks"></ul>
+          <p class="relics" id="db-relics"></p>
         </div>
       </div>
+      <div class="row"><button class="primary" id="db-again">再下一次</button><button id="db-menu">选择任务</button></div>
+    </div>
+  </section>
 
-      <div class="overlay" id="end-screen" hidden>
-        <div class="panel">
-          <span class="eyebrow" id="end-eyebrow">潜水结束</span>
-          <h1 id="end-title"></h1>
-          <p class="lead" id="end-text"></p>
-          <dl class="stats" id="end-stats"></dl>
-          <ul class="checks" id="end-checks"></ul>
-          <div class="start-row">
-            <button id="again-button" class="primary-button">同一计划再潜</button>
-            <button id="plan-button" class="outline-button">换个计划</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="controls" aria-label="移动控制">
-        <div class="move">
-          <button id="up-button" aria-label="上升（W / ↑）">▲<small>上升</small></button>
-          <button id="stop-button" aria-label="悬停（空格）">■<small>悬停</small></button>
-          <button id="down-button" aria-label="下潜（S / ↓）">▼<small>下潜</small></button>
-        </div>
-        <div class="seg" id="speed" role="group" aria-label="游速">
-          <button data-speed="0">慢</button><button data-speed="1">中</button><button data-speed="2">快</button>
-        </div>
-        <div class="seg" id="warp" role="group" aria-label="时间流速">
-          <button data-warp="1">×1</button><button data-warp="5">×5</button><button data-warp="20">×20</button><button data-warp="60">×60</button><button data-warp="180">×180</button>
-        </div>
-      </div>
-    </section>
-
-    <aside class="hud" aria-label="潜水电脑">
-      <section>
-        <h2>气体 <small>点击切换 · G 自动选择</small></h2>
-        <div id="gases" class="gases"></div>
-      </section>
-      <section>
-        <h2>减压计划 <small id="gf-label"></small></h2>
-        <div id="deco" class="deco"></div>
-      </section>
-      <section>
-        <h2>生理与环境</h2>
-        <dl class="grid" id="vitals"></dl>
-      </section>
-      <section class="log-section">
-        <h2>日志</h2>
-        <ol id="log" class="log"></ol>
-      </section>
-    </aside>
-  </main>
-
-  <dialog id="help-dialog">
+  <dialog id="help">
     <form method="dialog"><button class="close" aria-label="关闭">×</button></form>
-    <h2>玩法</h2>
+    <h2>操作</h2>
+    <table>
+      <tr><td><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> / 方向键</td><td>游动</td></tr>
+      <tr><td><kbd>Shift</kbd></td><td>按住：大踢腿，快，会起泥</td></tr>
+      <tr><td>鼠标</td><td>手电照的方向</td></tr>
+      <tr><td><kbd>Space</kbd></td><td>按住：抓线、沿线走</td></tr>
+      <tr><td><kbd>R</kbd></td><td>系线 / 接线 / 系线尾</td></tr>
+      <tr><td><kbd>E</kbd></td><td>捡起东西、挂回侧挂瓶、看牌子、出水</td></tr>
+      <tr><td><kbd>G</kbd></td><td>放下一个侧挂瓶</td></tr>
+      <tr><td><kbd>F</kbd></td><td>卡住时连按：扭动往前挤</td></tr>
+      <tr><td><kbd>X</kbd> / <kbd>1</kbd>–<kbd>4</kbd></td><td>换气</td></tr>
+      <tr><td><kbd>Q</kbd></td><td>按住：停下调整呼吸（时间加快，适合减压）</td></tr>
+      <tr><td><kbd>L</kbd></td><td>主灯坏了换备用灯</td></tr>
+      <tr><td><kbd>Z</kbd> / 右键</td><td>按住：朝手电方向看远一点</td></tr>
+      <tr><td><kbd>M</kbd></td><td>测绘图</td></tr>
+      <tr><td><kbd>Esc</kbd></td><td>暂停</td></tr>
+    </table>
+    <h2>规则</h2>
     <ul>
-      <li><b>移动：</b>按住 <kbd>S</kbd>/<kbd>↓</kbd> 沿引导绳下潜，<kbd>W</kbd>/<kbd>↑</kbd> 上升；也可以点屏幕上的按钮（点一下保持移动，点 ■ 悬停）。<kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> 选择游速。</li>
-      <li><b>时间：</b><kbd>T</kbd> 切换时间流速。长时间减压可以用 ×60、×180；出现危险时会自动回到 ×1。</li>
-      <li><b>气体：</b>点击气瓶或按 <kbd>G</kbd> 切换。注意每种气体的最大作业深度 (MOD) 和最低可呼吸深度。</li>
-      <li><b>减压：</b>红色虚线是当前减压上限，不能比它更浅。右侧给出完整的出水计划。</li>
-      <li><b>出水：</b>回到引导绳起点上方并继续上升到水面，潜水结束。</li>
+      <li>进洞前在开放水域系好主线，接上永久线。洞里永远别离开线。</li>
+      <li>永久线上的箭头指向出口。</li>
+      <li>底气用掉三分之一就返航。</li>
+      <li>出现减压上限时停在它下面，等它降下来再上。上升别超过 10 米/分。</li>
+      <li>减压模型：Bühlmann ZHL-16C + 梯度因子，淡水。洞穴剖面是虚构的示意。</li>
     </ul>
-    <h2>模型依据</h2>
-    <ul>
-      <li>组织饱和：Bühlmann ZHL-16C（氮、氦 16 组织），梯度因子 GF 低/高，低值锚定在出现过的最深上限。淡水 0.0981 bar/m，水蒸气 0.0627 bar。</li>
-      <li>氧气：氧分压 &gt; 1.6 有中枢神经毒性风险，CNS 时钟采用 NOAA 单次暴露限值；&lt; 0.16 缺氧。</li>
-      <li>氮醉：等效麻醉深度 (END，氧视为麻醉性) 超过 30 m 开始影响判断与呼吸量。</li>
-      <li>耗气：表面耗气率 × 环境压力 × 游动强度 × 压力（氮醉、扬沙）。</li>
-      <li>洞穴：九顿由 4 个斜井式天窗组成，0–40 m 为开放水域，40 m 处进入洞穴，50–120 m 竖井狭窄。已探明深度约 277 m。剖面为示意。</li>
-    </ul>
-    <p class="fine">九顿天窗曾多次发生致命事故。真实洞穴潜水需要系统训练、团队和应急预案，并须遵守当地管理规定。本游戏仅供娱乐与科普，不能用于真实潜水计划。</p>
   </dialog>
 </body>
 </html>

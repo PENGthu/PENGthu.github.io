@@ -13,7 +13,7 @@ feature_row:
   - image_path: games/jiudun-dive.svg
     alt: "九顿 · 下潜 洞穴剖面"
     title: "九顿 · 下潜 · Jiudun Cave Dive"
-    excerpt: "以广西都安九顿天窗为原型的洞穴潜水模拟：沿引导绳穿过 40 米洞口与狭窄竖井，管理混合气、减压与氧分压，活着回到天窗水面。基于 Bühlmann ZHL-16C 减压模型，仅供娱乐。"
+    excerpt: "以广西都安九顿天窗为原型的 2D 洞穴潜水游戏：自由游动、自己放线、能见度归零时摸线出洞，别把泥踢起来。挤过 85 米窄口，带着减压义务回到天窗水面；出了事，按时间线复盘。支持键盘鼠标与手机触屏。"
     url: /games/jiudun-dive/
     btn_label: "开始下潜"
     btn_class: "btn--success"
