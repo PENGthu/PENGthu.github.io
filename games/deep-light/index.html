@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#151f22"><meta name="description" content="地心寻光：复古像素挖矿冒险。挖矿、卖矿、升级装备，找到三枚晶核，深入地底救回伙伴。电脑与手机皆可玩，无需下载。">
+  <title>地心寻光 · Deep Light</title>
+  <link rel="icon" type="image/svg+xml" href="./icon.svg"><link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="shell">
+    <header class="masthead">
+      <a class="back" href="../../games/" aria-label="返回游戏大厅">← <span>游戏大厅</span></a>
+      <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M7 6h18l4 10-13 14L3 16Z" fill="#ffbf69"/><path d="M7 6l9 24L25 6M3 16h26" fill="none" stroke="#3d3527" stroke-width="2"/></svg><div><h1>地心寻光<span>DEEP LIGHT</span></h1><p>一盏头灯，一场向下的冒险。</p></div></div>
+      <div class="header-actions"><span class="save-state" id="save-state">本机存档</span><button class="icon-btn" id="sound-btn" aria-label="开启音效" title="音效">♪</button><button class="icon-btn" id="help-btn" aria-label="游戏指南" title="游戏指南">?</button><button class="icon-btn" id="pause-btn" aria-label="暂停游戏" title="暂停 / P">Ⅱ</button></div>
+    </header>
+    <main>
+      <section class="play-column" aria-label="挖矿冒险">
+        <div class="hud">
+          <div class="vital"><div class="vital-label"><span><i class="dot hp"></i>生命</span><b id="hp-label">100 / 100</b></div><div class="meter"><div id="hp-fill" class="hp-fill"></div></div></div>
+          <div class="vital"><div class="vital-label"><span><i class="dot air"></i>氧气</span><b id="air-label">120 / 120</b></div><div class="meter"><div id="air-fill" class="air-fill"></div></div></div>
+          <div class="hud-number"><small>当前深度</small><strong><span id="depth">0</span><em>m</em></strong></div>
+          <div class="hud-number cash"><small>营地金币</small><strong><em>¥</em><span id="coins">60</span></strong></div>
+        </div>
+        <div class="viewport" id="viewport">
+          <canvas id="game" width="960" height="576" tabindex="0" aria-label="地心寻光游戏场景，使用方向键或 WASD 移动和挖矿，空格攻击。"></canvas>
+          <div class="scene-label"><span class="live-dot"></span><span id="zone">营地 · 松风矿站</span></div>
+          <div class="scene-hint" id="scene-hint">↓ 向下挖掘 · E 矿工商店</div>
+          <button class="camp-button" id="camp-btn">⌂ 矿工商店 <kbd>E</kbd></button>
+          <div class="boss-hud" id="boss-hud" hidden><span id="boss-label">地心守卫</span><div class="meter"><div id="boss-fill"></div></div></div>
+          <div class="toast-stack" id="toasts" aria-live="polite"></div>
+          <div class="loading" id="loading">正在点亮头灯…</div>
+        </div>
+        <div class="toolbelt"><span class="belt-label">随身工具</span><button data-supply="bombs"><kbd>1</kbd><span class="tool-symbol bomb-symbol">✹</span><span>炸弹 <b id="bombs">3</b></span></button><button data-supply="tanks"><kbd>2</kbd><span class="tool-symbol air-symbol">▥</span><span>氧气 <b id="tanks">2</b></span></button><button data-supply="recalls"><kbd>3</kbd><span class="tool-symbol recall-symbol">⌂</span><span>回城 <b id="recalls">2</b></span></button><span class="attack-label"><kbd>空格</kbd> 钻头攻击</span></div>
+        <div class="touch-controls" aria-label="触屏控制"><div class="dpad"><button data-direction="left" aria-label="向左移动挖掘">←</button><div><button data-direction="up" aria-label="向上飞行挖掘">↑</button><button data-direction="down" aria-label="向下挖掘">↓</button></div><button data-direction="right" aria-label="向右移动挖掘">→</button></div><button class="touch-attack" data-direction="attack">钻头<br><small>攻击</small></button><p>长按方向挖掘<br>↑ 喷气上升</p></div>
+        <div class="underbar"><span><kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd> / WASD 移动与挖掘</span><span>氧气不够？按 <kbd>2</kbd> 补氧 · <kbd>3</kbd> 回城</span></div>
+      </section>
+      <aside class="sidebar">
+        <section class="journal"><div class="section-top"><h2>探险日志</h2><span>MISSION 01</span></div><h3>把伙伴带回光里</h3><p>阿岚的最后一个信号，来自地底深处。找到三枚晶核，解除地心守卫的护盾。</p><div class="cores" id="cores"></div><div class="quest-tip" id="quest-tip">晶核所在深度：116m / 240m / 356m</div><div class="map-wrap"><canvas id="minimap" width="192" height="144" aria-label="探索进度地图"></canvas><div class="map-legend"><span>地层雷达</span><span id="best-depth">最深 0m</span></div></div></section>
+        <section class="cargo"><div class="section-top"><h2>矿袋</h2><span id="bag-load">0 / 18</span></div><div class="meter bag-meter"><div id="bag-fill"></div></div><div id="ore-list" class="ore-list"></div><div class="cargo-total"><span>预计售价</span><b>¥<span id="bag-value">0</span></b></div></section>
+        <section class="equipment"><div class="section-top"><h2>装备</h2><span>UPGRADE</span></div><div id="equipment-list"></div><button class="workshop-link" id="workshop-btn">回营地升级 <span>↗</span></button></section>
+      </aside>
+    </main>
+    <footer><span><i></i>原创网页挖矿冒险 · 致敬童年的地底探索</span><span>进度自动保存在此浏览器 · <button id="new-btn">重新开始</button></span></footer>
+  </div>
+  <dialog id="intro" class="intro-dialog"><div class="intro-art"><div class="sun"></div><div class="mountain m1"></div><div class="mountain m2"></div><div class="intro-crystal">◆</div><span>松风矿站 · 失联后的第 3 天</span></div><div class="intro-copy"><span class="eyebrow">A LITTLE LIGHT. A DEEP ADVENTURE.</span><h2>往下挖，<br>把光带回来。</h2><p>伙伴阿岚在地底失去了联络。带上钻头和头灯，开采矿石、升级装备，追寻三枚晶核的微光。</p><div class="intro-steps"><span><b>01</b>挖矿 · 卖矿</span><span><b>02</b>补给 · 升级</span><span><b>03</b>晶核 · 救援</span></div><button id="start-btn" class="primary wide">点亮头灯，开始冒险 <span>→</span></button><p class="intro-note">方向键 / WASD 挖掘 · 手机支持触屏 · 自动存档</p></div></dialog>
+  <dialog id="shop" class="shop-dialog"><div class="dialog-heading"><div><span class="eyebrow">PINEWIND OUTPOST</span><h2>松风矿工商店</h2><p>矿石换金币，好装备陪你走更远。</p></div><button class="close-btn" data-close="shop" aria-label="关闭商店">×</button></div><div class="shop-summary"><div><span>你的金币</span><strong>¥<span id="shop-coins">60</span></strong></div><div><span>矿袋价值</span><strong>¥<span id="shop-value">0</span></strong></div><button class="primary" id="sell-btn">出售全部矿石</button></div><div class="shop-tabs"><button class="active" data-tab="equipment">装备升级</button><button data-tab="supply">随身补给</button></div><div id="shop-items" class="shop-items"></div><p class="shop-note">营地免费补满生命和氧气。晶核会永久保留，不会出售。</p></dialog>
+  <dialog id="help" class="help-dialog"><div class="dialog-heading"><div><span class="eyebrow">MINER'S FIELD GUIDE</span><h2>矿工小手册</h2></div><button class="close-btn" data-close="help" aria-label="关闭指南">×</button></div><div class="help-grid"><div><h3>移动与挖掘</h3><p>长按方向键或 WASD，自动挖开相邻土块。也可以点击场景中角色的上下左右，完成一步挖掘。↑ / W 使用喷气装备上升；松开按键会在空洞中下落。</p><h3>背包与商店</h3><p>矿石有不同价值和重量。回到地表按 E，出售矿石，升级钻头、氧气瓶、矿袋和护甲。</p><h3>怪物与地心守卫</h3><p>空格向面前挥动钻头。按 1 放置炸弹，1.1 秒后爆炸。自己的炸弹不会伤害你。集齐三枚晶核后，守卫的护盾才会消失。</p></div><div><h3>氧气与回城</h3><p>在地底持续消耗氧气。按 2 使用便携氧气，按 3 使用回城信标。信标会带回所有矿石。氧气耗尽后生命开始下降。</p><h3>岩层与危险</h3><p>Ⅱ级钻头能挖玄武岩，Ⅲ级能挖黑曜石。炸弹可炸开这两种岩层。绕开熔岩，长距离坠落也会受伤。</p><h3>存档与暂停</h3><p>每 10 秒自动保存，也可在暂停时保存。P / Esc 暂停，切换到其他页面会自动暂停。倒下时保留装备和晶核，损失矿石与 10% 金币。</p></div></div><button class="primary wide" data-close="help">明白了，继续冒险</button></dialog>
+  <dialog id="pause" class="small-dialog"><span class="eyebrow">TAKE A BREATH</span><h2>头灯还亮着。</h2><p id="pause-note">冒险已暂停，氧气不会消耗。</p><button class="primary wide" data-close="pause">继续冒险</button><button class="secondary wide" id="save-btn">保存进度</button><button class="text-button" id="pause-new-btn">重新开始一场冒险</button></dialog>
+  <dialog id="reset" class="small-dialog"><span class="eyebrow">A NEW EXPEDITION</span><h2>从新的矿层出发？</h2><p>重新生成世界，会替换当前浏览器的冒险进度。</p><button class="primary wide" id="confirm-new-btn">开始新的冒险</button><button class="secondary wide" data-close="reset">保留当前进度</button></dialog>
+  <dialog id="win" class="small-dialog win-dialog"><div class="win-gem">✦</div><span class="eyebrow">THE LIGHT FINDS A WAY</span><h2>你们回到了光里。</h2><p>阿岚听见了你的钻头声。信标重新亮起，回家的路终于不再漆黑。</p><div id="win-stats" class="win-stats"></div><button class="primary wide" data-close="win">继续探索矿层</button><button class="text-button" id="win-new-btn">再来一场冒险</button></dialog>
+  <noscript>请开启 JavaScript 后开始冒险。</noscript>
+  <script type="module" src="./app.mjs"></script>
+</body>
+</html>

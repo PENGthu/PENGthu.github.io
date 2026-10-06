@@ -3,6 +3,13 @@ permalink: /games/
 title: "Games"
 author_profile: true
 feature_row:
+  - image_path: games/deep-light.svg
+    alt: "地心寻光 · 复古像素挖矿冒险"
+    title: "地心寻光 · Deep Light"
+    excerpt: "致敬 2009 年《挖地小子》玩法的原创像素冒险：挖矿卖矿，升级钻头、氧气瓶与矿袋，带上炸弹和回城信标深入四层矿区。找到三枚地心晶核，击败守卫，把失联的伙伴带回光里。支持键盘与手机触屏，浏览器自动存档，无需 Flash。"
+    url: /games/deep-light/
+    btn_label: "点亮头灯"
+    btn_class: "btn--success"
   - image_path: games/spire-reforged.jpg
     alt: "尖塔重铸 · Spire Reforged 战斗画面"
     title: "尖塔重铸 · Spire Reforged"
