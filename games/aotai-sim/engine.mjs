@@ -1,207 +1,332 @@
-// A fictional mountain decision model. Values are game units, not medical forecasts.
-export const VERSION = 1;
-export const NODES = [
-  {name:'山脚', alt:1900, shelter:1, signal:true, water:true},
-  {name:'密林', alt:2520, shelter:.8, signal:false, water:true},
-  {name:'林线', alt:3010, shelter:.45, signal:false, water:false},
-  {name:'风口', alt:3280, shelter:.05, signal:false, water:false},
-  {name:'石海', alt:3430, shelter:.1, signal:false, water:false},
-  {name:'避风凹地', alt:3260, shelter:.65, signal:false, water:true},
-  {name:'高山垭口', alt:3540, shelter:.05, signal:false, water:false},
-  {name:'开阔山脊', alt:3460, shelter:.1, signal:false, water:false},
-  {name:'下行山坡', alt:3050, shelter:.4, signal:false, water:false},
-  {name:'谷地', alt:2440, shelter:.7, signal:true, water:true},
-  {name:'接应点', alt:1850, shelter:1, signal:true, water:true}
-];
-export const SCENARIOS = {
-  autumn:{name:'秋日骤变',subtitle:'晴天出发，天气会变。',base:10, storm:9, difficulty:1},
-  winter:{name:'冬季风雪',subtitle:'低温、强风与短暂的窗口。',base:-6, storm:5, difficulty:1.2},
-  fog:{name:'雾中同行',subtitle:'能见度下降，最慢的队员决定速度。',base:7, storm:7, difficulty:1.05}
-};
-export const PACKS = {
-  standard:{name:'完整装备',weight:22,tent:true,satellite:true,insulation:1,food:24,water:8,battery:100},
-  light:{name:'轻装出行',weight:12,tent:false,satellite:false,insulation:.7,food:15,water:5,battery:80},
-  heavy:{name:'冗余装备',weight:29,tent:true,satellite:true,insulation:1.15,food:30,water:10,battery:120}
-};
-export const clamp=(v,a=0,b=100)=>Math.min(b,Math.max(a,v));
+import {VERSION,SCENARIOS,BACKPACKS,ITEMS,PRESETS,NODES,NODE_BY_ID,EVENTS,ARRIVAL_EVENTS,RANDOM_EVENTS} from './data.mjs?v=2';
+export {VERSION,SCENARIOS,BACKPACKS,ITEMS,PRESETS,NODES,EVENTS};
+export const clamp=(v,min=0,max=100)=>Math.min(max,Math.max(min,v));
 const clone=x=>structuredClone(x);
-export function roll(seed,key) {
+const defined=(table,id)=>typeof id==='string'&&Object.hasOwn(table,id);
+const has=(s,id,n=1)=>(s.inventory[id]||0)>=n;
+const statKeys=['health','energy','warmth','san','satiety','hydration','wetness','battery','durability'];
+const conditionNames={gastro:'肠胃不适',ankle:'脚踝疼痛',altitude:'高处不适',leak:'装备进水'};
+export function roll(seed,key){
   let h=2166136261;
-  for (const c of `${seed}:${key}`) h=Math.imul(h^c.charCodeAt(0),16777619);
-  h^=h>>>16; h=Math.imul(h,2246822507); h^=h>>>13;
+  for(const c of `${seed}:${key}`)h=Math.imul(h^c.charCodeAt(0),16777619);
+  h^=h>>>16;h=Math.imul(h,2246822507);h^=h>>>13;
   return (h>>>0)/4294967296;
 }
-export const nodeAt=s=>NODES[Math.min(10,Math.max(0,Math.round(s.position)))];
-export const mean=(s,k)=>s.members.reduce((v,m)=>v+m[k],0)/s.members.length;
-export const weakest=(s,k)=>Math.min(...s.members.map(m=>m[k]));
-export function createGame({scenario='autumn',pack='standard',seed=261006}={}) {
-  scenario=SCENARIOS[scenario]?scenario:'autumn'; pack=PACKS[pack]?pack:'standard';
-  seed=Number.isFinite(Number(seed))?Math.trunc(Number(seed)):261006;
-  return {version:VERSION,scenario,pack,seed,tick:0,turn:0,position:.65,returning:false,
-    food:PACKS[pack].food,water:PACKS[pack].water,battery:PACKS[pack].battery,
-    satiety:88,hydration:92,wetness:0,cohesion:94,gear:100,cover:0,camp:false,
-    rescue:null,event:null,outcome:null,everCritical:false,careCount:0,unsafeCount:0,
-    members:[
-      {name:'林岚',role:'领队 · 状态均衡',energy:94,warmth:93,injury:0,resistance:1},
-      {name:'阿川',role:'队员 · 体能较好',energy:100,warmth:90,injury:0,resistance:1.08},
-      {name:'小满',role:'队员 · 恢复较慢',energy:86,warmth:88,injury:0,resistance:.88}
-    ]};
-}
-export function weatherAt(s,tick=s.tick) {
-  const cfg=SCENARIOS[s.scenario],slot=Math.floor(tick/3),shift=Math.floor(roll(s.seed,'shift')*3);
-  let phase=slot+shift, kind='晴间多云',rain=0,wind=2,visibility=120;
-  if (phase>=2) {kind='云层增厚';wind=4;visibility=70;}
-  if (phase>=4) {kind='雨雾';rain=2;wind=6;visibility=25;}
-  const inStorm=tick>=cfg.storm && tick<cfg.storm+15;
-  if (inStorm) {kind=s.scenario==='winter'?'暴风雪':'风雪交加';rain=4;wind=9+Math.floor(roll(s.seed,`wind:${slot}`)*3);visibility=8;}
-  else if(tick>=cfg.storm+15) {
-    const r=roll(s.seed,`weather:${slot}`);
-    kind=r>.7?'浓雾':r>.4?'阴天':'云隙微光';rain=r>.7?1:0;wind=r>.7?6:3;visibility=r>.7?15:80;
+export function cartSummary({backpack='trek',items={}}={}){
+  const bag=defined(BACKPACKS,backpack)?BACKPACKS[backpack]:null;
+  if(!bag)return {error:'请选择有效背包',price:0,weight:0,capacity:0};
+  let price=bag.price,weight=bag.weight,error='';
+  for(const [id,n] of Object.entries(items)){
+    const item=defined(ITEMS,id)?ITEMS[id]:null;
+    if(!item||!Number.isInteger(n)||n<0||n>item.max){error='物品数量无效';continue;}
+    price+=n*item.price;weight+=n*item.weight;
   }
-  if(s.scenario==='fog' && !inStorm) {kind='山地浓雾';visibility=15;rain=1;wind=4;}
-  const hour=(8+tick/3)%24,night=hour>=18||hour<6;
-  const temp=Math.round(cfg.base-(nodeAt(s).alt-1900)/220-(inStorm?7:0)-(night?5:0));
-  const severity=clamp((6-temp)*.045+wind*.065+rain*.14,.2,2.8);
-  return {kind,rain,wind,visibility,temp,night,severity,inStorm,hour};
+  return {price,weight:+weight.toFixed(2),capacity:bag.capacity,error};
 }
-export function forecast(s) {
-  return [3,6].map(offset=>{
-    const w=weatherAt(s,s.tick+offset);
-    return {offset,label:`${offset*20} 分钟后`,kind:w.kind,temp:w.temp,confidence:w.inStorm?'存在强风雪可能':'趋势估计'};
-  });
+export const nodeAt=s=>NODE_BY_ID[s.node];
+export function weightOf(s){return +(BACKPACKS[s.backpack].weight+s.cargo+s.emptyBatteries*.25+Object.entries(s.inventory).reduce((v,[id,n])=>v+ITEMS[id].weight*n,0)).toFixed(2);}
+export function createGame({scenario='letter',backpack,items,seed=261006}={}){
+  if(!defined(SCENARIOS,scenario))throw Error('无效故事');
+  backpack??=PRESETS.balanced.backpack;items??=PRESETS.balanced.items;
+  const cart=cartSummary({backpack,items});
+  if(cart.error||cart.price>SCENARIOS[scenario].budget||cart.weight>cart.capacity)throw Error(cart.error||'预算或背包容量不足');
+  if(!Number.isInteger(Number(seed))||Number(seed)<0||Number(seed)>999999999)throw Error('种子应为 0–999999999 的整数');
+  return {version:VERSION,scenario,backpack,seed:Number(seed),inventory:clone(items),money:SCENARIOS[scenario].budget-cart.price,
+    initialWeight:cart.weight,emptyBatteries:0,cargo:0,clock:0,turn:0,node:'foot',path:['foot'],visited:['foot'],returning:false,
+    health:100,energy:94,warmth:94,san:90,satiety:86,hydration:90,wetness:0,battery:100,durability:100,
+    companion:null,conditions:[],delayed:[],flags:{},merit:0,route:null,target:null,camped:false,rescue:null,quest:null,
+    event:scenario==='search'?'briefing':'notice',eventQueue:[],seen:[],outcome:null};
 }
-export function timeLabel(s) {
-  const min=480+s.tick*20,day=Math.floor(min/1440)+1;
-  return `第 ${day} 天 ${String(Math.floor(min/60)%24).padStart(2,'0')}:${String(min%60).padStart(2,'0')}`;
+export function timeLabel(s){
+  const mins=Math.round(6*60+s.clock*60);
+  return `第 ${Math.floor(mins/1440)+1} 天 ${String(Math.floor(mins/60)%24).padStart(2,'0')}:${String(Math.floor(mins%60)).padStart(2,'0')}`;
 }
-export function riskLevel(s) {
-  const w=weatherAt(s);
-  const value=w.severity*18+(100-weakest(s,'warmth'))*.35+(100-weakest(s,'energy'))*.25+s.wetness*.12+(100-s.cohesion)*.15;
-  return value>72?{name:'很高',level:3}:value>48?{name:'高',level:2}:value>25?{name:'中',level:1}:{name:'低',level:0};
+export function weatherAt(s,clock=s.clock,node=s.node){
+  const cfg=SCENARIOS[s.scenario],loc=NODE_BY_ID[node],slot=Math.floor(clock/5),r=roll(s.seed,`weather:${slot}`);
+  const inStorm=clock>=cfg.storm[0]&&clock<cfg.storm[1];
+  let kind='云隙晴光',wind=2,rain=0,visibility=120,icon='☀';
+  if(r>.74){kind='山间浓雾';wind=4;rain=1;visibility=18;icon='≋';}
+  else if(r>.4){kind='阴云渐厚';wind=5;visibility=60;icon='☁';}
+  if(inStorm){kind=cfg.cold<=0?'暴风雪':'风雪交加';wind=10;rain=3;visibility=8;icon='❄';}
+  const hour=(6+clock)%24,night=hour>=18||hour<6;
+  const temp=Math.round(cfg.cold-(loc.alt-1900)/240-(inStorm?7:0)-(night?4:0));
+  const severity=clamp(wind*.09+Math.max(0,9-temp)*.055+rain*.2,.2,3.2);
+  return {kind,wind,rain,visibility,icon,night,temp,severity,inStorm,hour};
 }
-function canContact(s) {return (PACKS[s.pack].satellite&&s.battery>=18)||(nodeAt(s).signal&&s.battery>=8);}
-export function getActions(s) {
-  const w=weatherAt(s),node=nodeAt(s),pack=PACKS[s.pack],minE=weakest(s,'energy');
-  const make=(id,title,desc,minutes,tags,disabled='')=>({id,title,desc,minutes,tags,disabled});
+export function forecast(s){return [3,6].map(h=>({hours:h,...weatherAt(s,s.clock+h)}));}
+export function conditionLabel(c){return conditionNames[c.id]||c.id;}
+export function riskLevel(s){
+  const score=(100-s.warmth)*.3+(100-s.energy)*.2+(100-s.health)*.4+weatherAt(s).severity*12+s.conditions.length*5;
+  return score>65?{name:'需要立即调整',level:3}:score>45?{name:'状态吃紧',level:2}:score>28?{name:'留意变化',level:1}:{name:'节奏尚稳',level:0};
+}
+export function questLabel(s){
+  if(!s.quest)return s.flags.voiceClue?'尚未报告的哨音线索':'许舟的下落未明';
+  const q=s.quest;
+  if(q.status==='rescued')return '许舟已等到救援';
+  if(q.status==='failed')return '许舟的等待窗口已错过';
+  if(q.status==='reported')return `救援接近中 · 约 ${Math.ceil(q.remaining)} 小时`;
+  if(q.status==='found')return '已找到许舟 · 正在决定援助方式';
+  return `需要报告位置 · 剩余 ${Math.max(0,Math.ceil(q.deadline-s.clock))} 小时`;
+}
+function requirement(s,req={}){
+  for(const [id,n] of Object.entries(req.items||{}))if(!has(s,id,n))return `需要 ${ITEMS[id].name}${n>1?` ×${n}`:''}`;
+  if(req.battery&&s.battery<req.battery)return `需要至少 ${req.battery} 点电量`;
+  return '';
+}
+function travelPlan(s,pace='steady'){
+  const target=s.returning?s.path.at(-2):(s.target||nodeAt(s).next);
+  if(!target)return null;
+  const loc=NODE_BY_ID[target],w=weatherAt(s),base=s.returning?Math.max(1,nodeAt(s).hours*.75):loc.hours;
+  const injury=s.conditions.some(c=>c.id==='ankle')?1.18:1,weakness=s.energy<30?1.2:1;
+  const factor=pace==='fast'?.72:pace==='careful'?1.22:1;
+  const hours=Math.max(.6,(base+(s.route?.hours||0))*factor*injury*weakness*(w.inStorm?1.15:1));
+  return {target,minutes:Math.round(hours*60/5)*5,cover:clamp((loc.shelter+nodeAt(s).shelter)/4+(s.route?.cover||0),0,.9)};
+}
+export function getActions(s){
   if(s.outcome)return [];
-  if(s.event)return [
-    make('event_wait','停下核对位置','暂不推进，核对离线地图并等待雾隙。',40,['耗时 40 分','减少走散风险']),
-    make('event_regroup','回到最后确认点','退回一小段，清点人数，重新建立队伍联系。',20,['进度 −','凝聚力 +']),
-    make('event_guess','按直觉继续走','节省核对时间，但可能偏离路线、加重疲劳。',20,['不确定性高','方向误判风险'])
-  ];
-  return [
-    make('steady',s.returning?'恢复前行':'稳步前进','按最慢队员的速度推进，保持队伍联系。',20,['进度 +','体力 −'],minE<12?'队员体力不足，先恢复或求援':''),
-    make('fast','加快行进','更快推进，也更消耗体力，雨雾中容易走散。',20,['进度 ++','滑坠风险 +'],minE<25?'最弱队员无法保持快行':''),
-    make('shelter','寻找避风处','小范围寻找遮蔽，减少接下来约 40 分钟的风雨暴露。',20,['短期遮蔽 +','停止推进']),
-    make('camp',s.camp?'在营地休整':'扎营休整',s.camp?'保持遮蔽，缓慢恢复体力与保温状态。':'搭建帐篷，换下湿衣，获得持续遮蔽。',60,['体力 +','消耗时间'],!pack.tent?'当前装备没有帐篷':s.gear<15?'装备损坏，先修整':''),
-    make('meal','进食与补水','全队各消耗一份口粮，共饮用 0.6 L 水。',20,['口粮 −3','饮水 −0.6 L'],s.food<3?'全队口粮不足':s.water<.6?'储水不足':''),
-    make('care','照顾队员 / 修整','处理扭伤、调整背负、修复装备，重新清点全队。',40,['伤势 −','凝聚力 +']),
-    make('water','过滤补水','在模拟水源点过滤补水，增加 3 L 储水。',40,['饮水 +3 L','停止推进'],!node.water?'这里没有模拟水源':s.water>=12?'储水已充足':''),
-    make('retreat','向山脚撤离','调整方向，沿已经确认的路段逐步返回。',20,['进度 −','撤离仍消耗体力']),
-    s.rescue?make('wait','留在定位点等救援','保持位置，利用现有遮蔽等待救援队接近。',40,['救援进度 +','仍需保温']):make('sos','联系救援','发送位置与队员状况，建立救援请求。',20,['电量 −','等待不等于获救'],!canContact(s)?'无可用通信：需要卫星通信电量或到达有信号节点':'')
-  ];
-}
-function end(s,kind,title,body) {
-  const health=(mean(s,'energy')+mean(s,'warmth'))/2;
-  const score=Math.round(kind==='critical'?clamp(health*.5,0,35):clamp(65+health*.35-s.unsafeCount*2-(s.everCritical?8:0)));
-  s.outcome={kind,title,body,score};
-}
-function summary(s) {
-  return {energy:Math.round(mean(s,'energy')),warmth:Math.round(mean(s,'warmth')),wetness:Math.round(s.wetness),cohesion:Math.round(s.cohesion),food:s.food,water:+s.water.toFixed(1),battery:Math.round(s.battery),position:+s.position.toFixed(2)};
-}
-export function step(input,id) {
-  const action=getActions(input).find(a=>a.id===id);
-  if(!action || action.disabled)return {state:clone(input),report:null,error:action?.disabled||'当前无法执行这个决策'};
-  const s=clone(input),before=summary(s),notes=[],startWeather=weatherAt(s),pack=PACKS[s.pack];
-  const eventAction=id.startsWith('event_'),moving=['steady','fast','retreat','event_guess','event_regroup'].includes(id);
-  const activeCamp=s.camp;
-  s.turn++; if(eventAction)s.event=null;
-  if(moving){s.camp=false;s.cover=0;}
-  if(id==='steady'||id==='fast')s.returning=false;
-  if(id==='retreat')s.returning=true;
-  if(id==='shelter'){s.cover=3;notes.push('找到短期遮蔽。移动会离开遮蔽，继续停留约 40 分钟后也会失效。');}
-  if(id==='camp'){s.camp=true;s.cover=0;notes.push(nodeAt(s).shelter<.2?'这里暴露于强风，帐篷只能提供部分保护。':'帐篷和地形共同提供遮蔽，但保温恢复仍取决于天气与装备。');}
-  if(id==='meal'){
-    s.food-=3;s.water-=.6;s.satiety=clamp(s.satiety+42);s.hydration=clamp(s.hydration+35);
-    s.members.forEach(m=>m.energy=clamp(m.energy+11));notes.push('全队完成进食补水。口粮储量与身体饱食度是两项独立状态。');
-  }
-  if(id==='care'){
-    s.gear=clamp(s.gear+20);s.cohesion=clamp(s.cohesion+18);s.careCount++;
-    s.members.forEach(m=>{m.injury=Math.max(0,m.injury-1);m.energy=clamp(m.energy+5);});notes.push('调整装备、照顾伤员并统一计划。持续保温同样需要遮蔽。');
-  }
-  if(id==='water'){s.water=Math.min(15,s.water+3);notes.push('补充 3 L 储水；过滤和寻找水源占用 40 分钟。');}
-  if(id==='sos'){
-    s.battery=Math.max(0,s.battery-(pack.satellite?18:8));
-    s.rescue={remaining:5+(startWeather.inStorm?4:0),position:s.position,calledAt:s.tick};
-    s.cohesion=clamp(s.cohesion+8);notes.push('救援请求已建立。强风雪会拖慢接近；自行移动后必须再次确认位置。');
-  }
-  if(id==='event_regroup'){s.position=Math.max(0,s.position-.22);s.cohesion=clamp(s.cohesion+16);notes.push('退回最后确认点，队伍重新集合。');}
-  if(id==='event_wait'){s.cohesion=clamp(s.cohesion+9);s.cover=Math.max(s.cover,2);notes.push('核对离线信息，避开方向不明时的继续推进。');}
-  let progress=0;
-  if(['steady','fast','retreat'].includes(id)) {
-    const weakestFactor=clamp((weakest(s,'energy')+40)/115,.4,1.15);
-    const injuryFactor=1/(1+Math.max(...s.members.map(m=>m.injury))*.24);
-    const cohesionFactor=s.cohesion<40?.75:1;
-    progress=(id==='fast'?.92:.59)*weakestFactor*injuryFactor*cohesionFactor/(1+startWeather.severity*.18);
-    if(id==='retreat')progress*=-1;
-    s.position=clamp(s.position+progress,0,10);
-    s.cohesion=clamp(s.cohesion+(id==='fast'?-7-startWeather.rain:-1));
-    if(id==='fast')s.unsafeCount++;
-    const slip=roll(s.seed,`slip:${input.tick}`);
-    if(nodeAt(s).shelter<.4 && slip<(id==='fast'?.12:.025)*(1+startWeather.rain*.2)){
-      const m=s.members[Math.floor(roll(s.seed,`member:${input.tick}`)*3)];m.injury=Math.min(3,m.injury+1);m.energy=clamp(m.energy-7);
-      notes.push(`${m.name}踩在湿滑岩面上扭伤。伤势会拖慢全队速度，可通过照顾队员减轻。`);
+  const actions=[];
+  const add=(id,title,desc,minutes,disabled='',kind='utility',extra={})=>actions.push({id,title,desc,minutes,disabled,kind,...extra});
+  if(s.event&&!s.returning&&!s.rescue){
+    for(const c of EVENTS[s.event].choices){
+      const expired=s.event==='hiker'&&s.quest?.status==='failed'&&c.id!=='report';
+      add(`choice:${c.id}`,c.title,c.desc,c.minutes,expired?'许舟的等待窗口已经错过':requirement(s,c.requires),'choice');
     }
-    notes.push(`${id==='retreat'?'撤离':'前进'} ${Math.abs(progress).toFixed(2)} 个抽象路段；速度受到最弱队员、天气和伤势影响。`);
+  }else if(!s.rescue){
+    for(const pace of ['steady','fast','careful']){
+      const p=travelPlan(s,pace);if(!p)continue;
+      const titles={steady:s.returning?'继续沿来路撤离':'保持节奏前进',fast:'加快这一段',careful:'谨慎走这一段'};
+      const desc={steady:`前往${NODE_BY_ID[p.target].name}，平衡时间与消耗。`,fast:'节省时间，消耗更多体力，受伤概率更高。',careful:'多花时间确认落点与方向，降低受伤概率。'};
+      add(`move:${pace}`,titles[pace],desc[pace],p.minutes,s.energy<8?'体力不足，先补给或休息':'','travel',{target:p.target});
+    }
   }
-  if(id==='event_guess'){
-    s.unsafeCount++;
-    if(roll(s.seed,`guess:${input.tick}`)<.7){s.position=Math.max(0,s.position-.2);s.cohesion=clamp(s.cohesion-19);s.members.forEach(m=>m.energy=clamp(m.energy-10));notes.push('方向判断失误，绕行后回到原处附近，消耗体力并拉大队伍距离。');}
-    else {s.position=Math.min(10,s.position+.4);notes.push('这次恰好选对了方向。一次成功不能证明同类选择没有风险。');}
+  add('rest','短暂休息','停留一小时。有遮蔽、睡袋和充足补给时恢复更好。',60);
+  add('camp','扎营休整','休整六小时，持续消耗饱腹、补水与电量。',360,has(s,'tent')?'':'需要抗风帐篷');
+  add('heat','开炉取暖','消耗 1 份燃气，恢复保温并烘干衣物。',40,requirement(s,{items:{stove:1,fuel:1}}));
+  add('refill','处理水源，装满水瓶','增加最多 4 瓶水，上限 8 瓶。',45,!nodeAt(s).water?'这里没有水源':!has(s,'filter')&&!has(s,'stove')?'需要净水工具或炉具':!has(s,'filter')&&!has(s,'fuel')?'烧水需要燃气':has(s,'water',8)?'水瓶已经装满':'');
+  add('repair','修整装备','完整度 +22，需要工具并停留一小时。',60,requirement(s,{items:{repair:1}}));
+  const contact=(has(s,'satellite')||nodeAt(s).signal)&&s.battery>=25;
+  if(s.rescue)add('wait','守在定位点等待','等待两小时；有帐篷时会利用遮蔽，仍需进食与保温。',120);
+  else add('sos','发送定位，请求撤离','25 点电量，建立自己的救援请求。等待期间不能继续移动。',20,contact?'':'需要卫星通信器或手机信号，以及 25 点电量');
+  if(!s.returning&&!s.rescue)add('retreat','决定沿来路撤离','改变行程目标，之后仍需逐段走回山脚。',15);
+  if(nodeAt(s).signal&&s.quest?.status==='waiting')add('report','报告许舟的位置','把位置和伤情交给救援人员，等待进度将继续推进。',20,s.battery<8?'需要 8 点电量':'');
+  if(s.node==='hut')add('resupply','购买小屋补给','花费 300 元，获得 3 份口粮、1 个医疗包、4 瓶水。',30,s.flags.resupplied?'已经领取过这批补给':s.money<300?'剩余预算不足 300 元':'');
+  for(const [id,item] of Object.entries(ITEMS)){
+    if(!item.usable||!has(s,id))continue;
+    const disabled=id==='meal'?requirement(s,{items:{stove:1,fuel:1,water:1}}):'';
+    add(`use:${id}`,`使用${item.name}`,item.desc,id==='meal'?35:id==='med'?30:10,disabled,'item');
   }
-  for(let i=0;i<action.minutes/20;i++) {
-    const w=weatherAt(s),node=nodeAt(s),resting=id==='camp'||id==='wait';
-    const cover=s.camp?(node.shelter<.2?.56:.83):(s.cover>0?.65:0);
-    const exposure=(1-cover)*(1-node.shelter*.42);
-    s.wetness=clamp(s.wetness+w.rain*exposure*2.5-(cover>0?5:0));
-    const depletion=(moving?(id==='fast'?7:4.3):1.8)+(pack.weight-12)*.1;
-    s.satiety=clamp(s.satiety-(moving?6:4));s.hydration=clamp(s.hydration-(moving?5:3));
-    s.members.forEach(m=>{
-      const shortage=(s.satiety<25?2.5:0)+(s.hydration<25?2.5:0);
-      const recovery=resting&&s.satiety>25&&s.hydration>25?8.2:0;
-      m.energy=clamp(m.energy-(depletion+shortage+m.injury*.8)/m.resistance+recovery);
-      const cold=w.severity*2.8*exposure/pack.insulation+s.wetness*.023+(m.energy<25?1.7:0);
-      const warmthGain=(s.camp?3.1:s.cover>0?1.6:0)+(moving?.75:0);
-      m.warmth=clamp(m.warmth-cold/m.resistance+warmthGain);
-    });
-    if(s.camp && w.wind>=9)s.gear=clamp(s.gear-3);
-    if(s.gear<15 && s.camp){s.camp=false;notes.push('帐篷装备损坏，持续遮蔽失效。');}
-    s.battery=Math.max(0,s.battery-(w.temp<0?1.15:.5));
-    s.tick++;if(s.cover>0)s.cover--;
+  for(const [id,n] of Object.entries(s.inventory))if(n>0)add(`drop:${id}`,`丢弃一件${ITEMS[id].name}`,'丢弃后无法取回，会减轻负重；记录可回溯。',0,'','drop');
+  return actions;
+}
+function addCondition(s,id,notes){
+  if(!s.conditions.some(c=>c.id===id)){s.conditions.push({id});notes.push(`出现持续状态：${conditionNames[id]}。它会影响之后的消耗，可以使用医疗包或修整处理。`);}
+}
+function addItems(s,items,notes){
+  for(const [id,n] of Object.entries(items)){
+    const before=s.inventory[id]||0;s.inventory[id]=Math.min(ITEMS[id].max,before+n);
+    const gained=s.inventory[id]-before;
+    if(gained)notes.push(`${ITEMS[id].name} +${gained}。`);
+    if(gained<n)notes.push(`${ITEMS[id].name}已到携带数量上限，未带走多余物资。`);
+  }
+}
+function reportQuest(s,notes){
+  if(s.quest?.status==='waiting'){
+    s.quest.status='reported';s.quest.remaining=weatherAt(s).inStorm?9:6;
+    notes.push('许舟的位置已送达。救援已出发，但仍需要赶在他的等待窗口内接近。');
+  }else if(s.flags.voiceClue&&!s.flags.clueReported){s.flags.clueReported=true;s.merit++;notes.push('你报告了哨音线索。值守员会核查，但目前没有许舟获救的确认。');}
+  else if(s.quest?.status==='failed')notes.push('你送到了位置，但此前留下的等待窗口已经耗尽。消息无法改变已经错过的时间。');
+}
+function startRescue(s,notes){
+  s.rescue={remaining:weatherAt(s).inStorm?13:9,node:s.node};s.event=null;s.eventQueue=[];
+  notes.push('自己的救援请求已确认。保持定位点，预计等待 9–13 个游戏小时；强风雪会拖慢接近。');
+}
+function applyEffect(s,e,notes){
+  for(const [id,n] of Object.entries(e.cost||{})){s.inventory[id]-=n;notes.push(`${ITEMS[id].name} −${n}。`);}
+  for(const key of statKeys)if(Number.isFinite(e[key]))s[key]=clamp(s[key]+e[key]);
+  if(e.grant)addItems(s,e.grant,notes);
+  if(e.flags)Object.assign(s.flags,e.flags);
+  if(e.condition)addCondition(s,e.condition,notes);
+  if(e.remove)s.conditions=s.conditions.filter(c=>c.id!==e.remove);
+  if(e.delayed){s.delayed.push({id:e.delayed,at:s.clock+4+roll(s.seed,`delay:${s.turn}`)*3});notes.push('眼前没有明显异常。你的选择已经写入后续事件。');}
+  if(e.merit)s.merit+=e.merit;
+  if(e.cargo)s.cargo+=e.cargo;
+  if(e.target)s.target=e.target;
+  if(e.route)s.route=clone(e.route);
+  if(e.returning){s.returning=true;s.eventQueue=[];}
+  if(e.companion==='join'){s.companion={name:'鹿宁'};notes.push('鹿宁加入同行。她会帮你核对信息，缓解精神消耗。');}
+  if(e.companion==='leave'){s.companion=null;notes.push('鹿宁在营地等接应。你们把各自的下一步说清楚了。');}
+  if(e.companion==='part'){
+    s.companion=null;
+    if(s.flags.trust){addItems(s,{med:1},notes);s.flags.helpedCompanion=true;notes.push('告别前，鹿宁把备用医疗包留给了你：“你之前帮过我。”');}
+    else notes.push('你们互相道别，她沿来路下撤。');
+  }
+  if(e.quest&&s.quest?.status!=='failed'){
+    const deadline=s.clock+({direct:32,provision:34,basic:20,bare:12,together:36}[e.quest])*(s.scenario==='search'?.82:1);
+    s.quest={status:['direct','together'].includes(e.quest)?'reported':'waiting',deadline,remaining:['direct','together'].includes(e.quest)?(weatherAt(s).inStorm?11:8):null,mode:e.quest};
+    notes.push(`援助已记下。${s.quest.status==='reported'?'救援已出发。':`你需要报告位置；当前等待窗口约 ${Math.round(deadline-s.clock)} 小时。`}`);
+  }
+  if(e.reportQuest)reportQuest(s,notes);
+  if(e.rescue)startRescue(s,notes);
+  if(e.random==='lost'){
+    if(roll(s.seed,`lost:${s.turn}`)<.72){s.delayed.push({id:'lost',at:s.clock+.5});notes.push('你按脚印走了一段。方向仍未得到确认。');}
+    else{s.san=clamp(s.san+2);notes.push('这次脚印恰好通向正确方向。');}
+  }
+  if(e.random==='takin'){
+    if(roll(s.seed,`animal:${s.turn}`)<.75){s.health=clamp(s.health-18);s.energy=clamp(s.energy-15);addCondition(s,'ankle',notes);notes.push('它突然向前冲。慌乱后退时，你摔倒并受了伤。');}
+    else notes.push('它离开了。这一次没有发生冲突。');
+  }
+  if(e.random==='ford'){
+    if(roll(s.seed,`ford:${s.turn}`)<.68){s.wetness=clamp(s.wetness+55);s.health=clamp(s.health-7);addCondition(s,'ankle',notes);notes.push('落脚的石块转动了，你跌入冷水。');}
+    else{s.wetness=clamp(s.wetness+12);notes.push('勉强跨过，鞋袜还是湿了。');}
+  }
+}
+function summary(s){return Object.fromEntries([...statKeys,'clock'].map(k=>[k,+s[k].toFixed(1)]).concat([['weight',weightOf(s)]]));}
+function end(s,kind,title,text){
+  if(s.outcome)return;
+  const safe=kind!=='critical',achievements=[];
+  if(safe)achievements.push('home');
+  if(kind==='completed')achievements.push('crossing');
+  if(s.quest?.status==='rescued'&&safe)achievements.push('rescuer');
+  if(kind==='retreated'&&s.flags.escort)achievements.push('escort');
+  if(safe&&s.flags.litter)achievements.push('leaveNoTrace');
+  if(kind==='completed'&&s.initialWeight<18)achievements.push('light');
+  if(s.scenario==='snow'&&['completed','rescued'].includes(kind))achievements.push('winter');
+  if(safe&&s.merit>=7)achievements.push('kindness');
+  s.outcome={kind,title,text,achievements,quest:s.quest?.status||'unknown'};
+}
+function advanceTime(s,hours,context,notes){
+  let left=hours;
+  while(left>1e-6&&!s.outcome){
+    const dt=Math.min(.25,left),loc=NODE_BY_ID[context.target||s.node],w=weatherAt(s,s.clock,loc.id);
+    const goodGear=clamp(s.durability/70,.3,1),tent=has(s,'tent')&&s.durability>15;
+    const baseCover=context.rest||s.camped?(loc.shelter>=.95?1:tent?(.48+loc.shelter*.4)*goodGear:loc.shelter*.55):loc.shelter*.45;
+    const cover=clamp(context.cover??baseCover,0,1),exposure=1-cover,moving=!!context.moving,resting=!!context.rest;
+    const gastro=s.conditions.some(c=>c.id==='gastro'),ankle=s.conditions.some(c=>c.id==='ankle'),altitude=s.conditions.some(c=>c.id==='altitude'),leak=s.conditions.some(c=>c.id==='leak');
+    s.wetness=clamp(s.wetness+(w.rain*6*exposure*(has(s,'shell')?.28:1)+(leak?1:0)-cover*8)*dt);
+    const insulation=((has(s,'down')?.55:0)+(has(s,'shell')?.22:0)+(has(s,'gloves')?.09:0))*goodGear;
+    const cold=w.severity*7*(1-insulation*.92)*exposure+s.wetness*.018+(s.energy<15?1.8:0);
+    const warmGain=(moving?1.1:0)+(resting&&has(s,'bag')?3.2*cover:0)+(resting&&tent?1.4*cover:0);
+    s.warmth=clamp(s.warmth+(warmGain-cold)*dt);
+    const load=Math.max(0,weightOf(s)-11)*.32+Math.max(0,weightOf(s)-BACKPACKS[s.backpack].capacity)*1.2;
+    const work=moving?(6.5+load+(context.fast?3.2:0)+(ankle?2:0)+(altitude?2:0)-(has(s,'poles')?.6:0)):.65;
+    const shortage=(s.satiety<15?2:0)+(s.hydration<15?3:0)+(gastro?1.5:0);
+    const recovery=resting?(has(s,'bag')?7.5:4)*(has(s,'mat')?1.13:1)*Math.max(.3,cover)*(s.satiety>15&&s.hydration>15?1:.35):0;
+    s.energy=clamp(s.energy+(recovery-work-shortage)*dt);
+    s.satiety=clamp(s.satiety-((moving?4.8:2.4)+(gastro?4:0))*dt);
+    s.hydration=clamp(s.hydration-((moving?6:2.7)+(gastro?5:0))*dt);
+    const stress=(w.night&&moving?1.6:.5)+(s.warmth<25?2:0)+(s.energy<15?1.5:0);
+    s.san=clamp(s.san+((resting?2.4:0)+(s.companion?.4:0)-stress)*dt);
+    const harm=(s.warmth<15?(15-s.warmth)*.6:0)+(s.energy<=0?4:0)+(s.satiety<=0?2.5:0)+(s.hydration<=0?5:0)+(s.san<=0?3:0)+(gastro?.6:0)+(altitude&&moving?.4:0);
+    s.health=clamp(s.health+(resting&&harm===0&&cover>.6?.6:-harm)*dt);
+    s.battery=clamp(s.battery-(.28+(moving&&has(s,'gps')?.65:0)+(moving&&w.night&&has(s,'lamp')?.8:0))*dt);
+    s.durability=clamp(s.durability-((moving?.45:0)+(w.inStorm&&tent&&resting?.8:0)+(leak?1.2:0))*dt);
+    s.clock+=dt;left-=dt;
+    const ready=s.delayed.filter(d=>d.at<=s.clock);s.delayed=s.delayed.filter(d=>d.at>s.clock);
+    for(const d of ready){
+      if(d.id==='lost'){s.energy=clamp(s.energy-14);s.san=clamp(s.san-12);s.flags.lost=true;notes.push('绕行后才发现方向判断错了。你退回确认点，体力与精神额外消耗。');left+=1.5;}
+      else if(d.id==='leak')addCondition(s,'leak',notes);
+      else if(roll(s.seed,`ill:${d.at.toFixed(3)}`)<.8)addCondition(s,d.id,notes);
+      else notes.push('身体暂时没有出现不适。');
+    }
+    if(s.quest&&['waiting','reported','found'].includes(s.quest.status)){
+      if(s.quest.status==='reported')s.quest.remaining=Math.max(0,s.quest.remaining-dt*(w.inStorm?.65:1));
+      if(s.quest.status==='reported'&&s.quest.remaining<=0){s.quest.status='rescued';notes.push('通信里传来确认：救援已经接近许舟。他等到了。');}
+      else if(s.clock>=s.quest.deadline){s.quest.status='failed';s.san=clamp(s.san-12);notes.push('许舟的等待窗口耗尽，救援未能及时接近。这一支线已经改变。');}
+    }
+    if(s.health<=0){end(s,'critical','没能等到天亮','身体状态耗尽，行程停在了这里。看看最早出现的风险信号，从那一步重新选择。');break;}
     if(s.rescue){
-      if(!w.inStorm || roll(s.seed,`rescue:${s.tick}`)>.72)s.rescue.remaining=Math.max(0,s.rescue.remaining-1);
-      if(s.rescue.remaining===0 && Math.abs(s.position-s.rescue.position)>.6){s.rescue.remaining=2;s.rescue.position=s.position;notes.push('队伍离开最初定位点，救援队需要重新接近当前位置。');}
+      s.rescue.remaining=Math.max(0,s.rescue.remaining-dt*(w.inStorm?.65:1));
+      if(s.rescue.remaining<=0){end(s,'rescued',s.quest?.status==='rescued'?'你们一起看见了灯光':'灯光终于照到了你','你守住了定位点，也把剩余物资用在了等待上。救援完成，这次行程到此结束。');break;}
     }
-    if(weakest(s,'warmth')<20 || weakest(s,'energy')<12)s.everCritical=true;
-    if(weakest(s,'warmth')<=0 || weakest(s,'energy')<=0){end(s,'critical','失去自主行动能力','一名队员的状态降至危急阈值，推演终止。回看最早的风险信号，尝试更早调整计划。');break;}
+    if(s.clock>=96){end(s,'critical','山里的时间用尽了','行程超过了四个游戏日，补给和行动窗口失去控制。回看绕行、停留与撤离的决定。');break;}
   }
-  if(!s.outcome){
-    if(s.rescue && s.rescue.remaining<=0)end(s,'rescued','救援队接近了你们','你们保持了足够的保温与体力，并等待到了救援。救援完成是这次推演的有效结局。');
-    else if(s.position<=0 && (s.returning||id==='event_regroup'))end(s,'retreated','全队安全撤回山脚','你们及时调整了目标，带所有队员回到接应区域。');
-    else if(s.position>=10)end(s,'completed','全队抵达接应点','你们完成了这次虚构山地行程。决定成绩的是队伍状态，而不只是抵达。');
-    else if(s.tick>=144)end(s,'critical','行程失去可控窗口','推演已超过 48 小时。继续停留无法解决当前困境，回看补给与撤离决策。');
-  }
-  if(!s.outcome && moving && !eventAction && !s.returning && !s.rescue && s.position>1.8 && weatherAt(s).visibility<30 && (s.cohesion<35||roll(s.seed,`event:${s.tick}`)<.23)){
-    s.event={title:'雾里，路线变得不确定',body:'前方的石堆标记消失在雾中。小满落后了一段，阿川认为可以沿着眼前的山梁继续。你要先做什么？'};
-    notes.push('新的决策情境：路线不明且队员距离拉大，必须先处理这一情况。');
-  }
-  if(activeCamp && moving)notes.push('离开营地后，帐篷不再提供遮蔽。');
-  if(weakest(s,'warmth')<35)notes.push('保温状态偏低：最弱队员已经不能承受长时间暴露。');
-  if(s.satiety<25||s.hydration<25)notes.push('饱食或补水状态不足，体力下降开始加快。');
-  return {state:s,report:{turn:s.turn,id,title:action.title,minutes:action.minutes,before,after:summary(s),notes,weather:startWeather,time:timeLabel(s)}};
 }
-export function validateSave(s) {
-  return !!s&&s.version===VERSION&&SCENARIOS[s.scenario]&&PACKS[s.pack]&&Array.isArray(s.members)&&s.members.length===3&&
-    ['tick','turn','position','food','water','battery','satiety','hydration','wetness','cohesion','gear'].every(k=>Number.isFinite(s[k]))&&
-    s.position>=0&&s.position<=10&&s.members.every(m=>['energy','warmth','injury','resistance'].every(k=>Number.isFinite(m[k])));
+function arrival(s,notes){
+  const id=s.node;if(s.visited.includes(id))return;
+  s.visited.push(id);let events=[];
+  if(ARRIVAL_EVENTS[id])events.push(ARRIVAL_EVENTS[id]);
+  if(id==='hollow')s.quest={status:'found',deadline:s.clock+12,remaining:null,mode:'found'};
+  if(id==='camp'&&s.companion)events.push('companionCamp');
+  const pool=(RANDOM_EVENTS[id]||[]).filter(e=>!s.seen.includes(e)&&!(e==='storm'&&!weatherAt(s).inStorm));
+  if(pool.length)events.push(pool[Math.floor(roll(s.seed,`arrival:${id}`)*pool.length)]);
+  if(weatherAt(s).night&&id!=='hut'&&!s.seen.includes('dusk'))events.push('dusk');
+  if(s.san<36&&!s.seen.includes('hallucination'))events.unshift('hallucination');
+  events=[...new Set(events)].filter(e=>!s.seen.includes(e));s.eventQueue=events.slice(1);s.event=events[0]||null;
+  if(s.event)notes.push(`新的情境：${EVENTS[s.event].title}`);
+}
+function useItem(s,id,notes){
+  s.inventory[id]--;
+  const effects={ration:{satiety:46,energy:10},snack:{energy:15,satiety:18},water:{hydration:46},warmer:{warmth:20},blanket:{warmth:25},battery:{battery:45},patch:{durability:30},med:{health:10}};
+  if(id==='meal')applyEffect(s,{cost:{fuel:1,water:1},satiety:65,energy:22,warmth:16,hydration:20,san:5},notes);
+  else applyEffect(s,effects[id]||{},notes);
+  if(id==='battery')s.emptyBatteries++;
+  if(id==='patch')s.conditions=s.conditions.filter(c=>c.id!=='leak');
+  if(id==='med'){
+    const treat=s.conditions.find(c=>c.id!=='leak');
+    if(treat){s.conditions=s.conditions.filter(c=>c!==treat);notes.push(`处理了${conditionNames[treat.id]}。`);}
+    else notes.push('目前没有需要处理的病痛，医疗包用于恢复生命状态。');
+  }
+  notes.push(`${ITEMS[id].name} −1。`);
+}
+export function step(input,id){
+  const a=getActions(input).find(action=>action.id===id);
+  if(!a||a.disabled)return {state:clone(input),report:null,error:a?.disabled||'当前不能执行这个行动'};
+  const s=clone(input),before=summary(s),notes=[],w=weatherAt(s),location=nodeAt(s).name,context={};
+  const eventId=s.event;s.turn++;
+  if(id.startsWith('choice:')){
+    const c=EVENTS[s.event].choices.find(c=>c.id===id.slice(7));
+    applyEffect(s,c.effect,notes);context.rest=!!c.effect.rest;context.cover=c.effect.cover;
+    s.seen.push(eventId);s.event=s.returning||s.rescue?null:(s.eventQueue.shift()||null);
+    if(context.rest)s.camped=has(s,'tent');
+  }else if(id.startsWith('move:')){
+    const pace=id.slice(5),p=travelPlan(s,pace);context.moving=true;context.target=p.target;context.cover=p.cover;context.fast=pace==='fast';s.camped=false;
+    const nextWeather=weatherAt(s,s.clock,p.target);
+    const chance=(has(s,'boots')?.025:.11)*(pace==='fast'?2.8:pace==='careful'?.3:1)*(1+nextWeather.rain*.25+(nextWeather.night&&(!has(s,'lamp')||s.battery<4)?1.5:0));
+    if(roll(s.seed,`slip:${s.turn}:${s.node}`)<chance){addCondition(s,'ankle',notes);s.health=clamp(s.health-7);notes.push('湿滑的落脚点让你扭伤了脚踝。');}
+  }else if(id.startsWith('use:'))useItem(s,id.slice(4),notes);
+  else if(id.startsWith('drop:')){s.inventory[id.slice(5)]--;notes.push('物品已放弃，无法在本分支取回。');}
+  else if(id==='rest'||id==='camp'||id==='wait'){
+    context.rest=true;s.camped=has(s,'tent');
+    if(id==='camp')notes.push('扎营休整。装备、地形和剩余饱腹 / 补水状态共同决定恢复。');
+  }else if(id==='heat'){s.inventory.fuel--;applyEffect(s,{warmth:26,wetness:-25},notes);context.cover=.55;notes.push('消耗 1 份燃气，保温恢复，衣物得到烘干。');}
+  else if(id==='refill'){if(!has(s,'filter'))s.inventory.fuel--;addItems(s,{water:4},notes);}
+  else if(id==='repair'){s.durability=clamp(s.durability+22);s.conditions=s.conditions.filter(c=>c.id!=='leak');notes.push('整理裂口、背负和营地连接，装备进水状态解除。');}
+  else if(id==='retreat'){s.returning=true;s.event=null;s.eventQueue=[];s.route=null;s.target=null;notes.push('目标改为沿确认过的来路撤回。每一段撤离仍会消耗时间与状态。');}
+  else if(id==='sos'){s.battery-=25;startRescue(s,notes);}
+  else if(id==='report'){s.battery-=8;reportQuest(s,notes);}
+  else if(id==='resupply'){s.money-=300;s.flags.resupplied=true;addItems(s,{ration:3,med:1,water:4},notes);}
+  advanceTime(s,a.minutes/60,context,notes);
+  if(context.moving&&!s.outcome){
+    s.node=context.target;s.route=null;s.target=null;
+    if(s.returning)s.path.pop();else s.path.push(s.node);
+    notes.push(`抵达${nodeAt(s).name}。`);
+    if(s.returning&&s.node==='foot')end(s,'retreated',s.flags.escort?'两个人的归途':'你决定把自己带回家','你沿来路返回山脚。这次行程的目标改变了，安全归来没有改变。');
+    else if(s.node==='exit')end(s,'completed',s.quest?.status==='rescued'?'归来的人，不止你一个':s.quest?.status==='failed'?'一条没能及时送达的消息':['waiting','found'].includes(s.quest?.status)?'留在山上的等待':'风雪之后，是人间','你抵达了山下接应点。旅程的意义留在那些停下、绕行、分享与告别的时刻。');
+    else if(!s.returning)arrival(s,notes);
+  }
+  if(!s.outcome&&s.returning&&s.node==='foot')end(s,'retreated','从山脚重新出发的选择','你在进入山地之前重新评估了准备。这同样是一次有效的决定。');
+  if(!s.outcome&&!s.event&&!s.returning&&!s.rescue&&s.san<30&&!s.seen.includes('hallucination')){s.event='hallucination';}
+  if(weightOf(s)>BACKPACKS[s.backpack].capacity)notes.push('负重超过背包容量：行进消耗明显增加，可以在背包中放弃物品。');
+  if(s.warmth<30)notes.push('保温状态偏低。继续暴露会开始影响生命与体力。');
+  if(s.hydration<20||s.satiety<20)notes.push('身体的补水或饱腹状态不足。背包里有补给，也需要主动使用。');
+  return {state:s,report:{turn:s.turn,id,title:a.title,event:eventId,minutes:+((s.clock-input.clock)*60).toFixed(0),before,after:summary(s),notes,weather:w,location,time:timeLabel(s)}};
+}
+export function validateSave(s){
+  if(!s||s.version!==VERSION||!defined(SCENARIOS,s.scenario)||!defined(BACKPACKS,s.backpack)||!defined(NODE_BY_ID,s.node))return false;
+  if(!statKeys.every(k=>Number.isFinite(s[k])&&s[k]>=0&&s[k]<=100))return false;
+  if(!['clock','turn','seed','money','initialWeight','cargo','emptyBatteries','merit'].every(k=>Number.isFinite(s[k])&&s[k]>=0))return false;
+  if(s.clock>100||s.turn>1000||!Number.isInteger(s.turn)||!Number.isInteger(s.seed))return false;
+  if(!s.inventory||typeof s.inventory!=='object'||!Object.entries(s.inventory).every(([id,n])=>ITEMS[id]&&Number.isInteger(n)&&n>=0&&n<=ITEMS[id].max))return false;
+  if(!Array.isArray(s.path)||!s.path.length||s.path[0]!=='foot'||s.path.at(-1)!==s.node||!s.path.every(id=>defined(NODE_BY_ID,id)))return false;
+  if(!Array.isArray(s.visited)||!s.visited.every(id=>defined(NODE_BY_ID,id))||!Array.isArray(s.seen)||!s.seen.every(id=>defined(EVENTS,id)))return false;
+  if(s.event&&!defined(EVENTS,s.event)||!Array.isArray(s.eventQueue)||!s.eventQueue.every(id=>defined(EVENTS,id)))return false;
+  if(!Array.isArray(s.conditions)||!s.conditions.every(c=>c&&conditionNames[c.id])||!Array.isArray(s.delayed)||!s.delayed.every(d=>['gastro','leak','lost'].includes(d.id)&&Number.isFinite(d.at)))return false;
+  if(!s.flags||typeof s.flags!=='object'||typeof s.returning!=='boolean'||typeof s.camped!=='boolean')return false;
+  if(s.target&&!defined(NODE_BY_ID,s.target))return false;
+  if(s.route&&(!Number.isFinite(s.route.hours)||!Number.isFinite(s.route.cover)))return false;
+  if(s.companion&&s.companion.name!=='鹿宁')return false;
+  if(s.rescue&&(!Number.isFinite(s.rescue.remaining)||s.rescue.remaining<0||!NODE_BY_ID[s.rescue.node]))return false;
+  if(s.quest&&(!['found','waiting','reported','rescued','failed'].includes(s.quest.status)||!Number.isFinite(s.quest.deadline)||s.quest.status==='reported'&&!Number.isFinite(s.quest.remaining)))return false;
+  if(s.outcome&&(!['critical','completed','retreated','rescued'].includes(s.outcome.kind)||!Array.isArray(s.outcome.achievements)))return false;
+  return true;
 }
