@@ -13,6 +13,7 @@
 - 可以沿实际走过的分支撤回；自身求援会固定位置，并继续消耗身体状态。抵达、撤离、获救与失败均有完整结局。
 - 八项跨局成就，自动存档，同种子重玩，任意一步回溯分支、原选择比较和 JSON 记录导出。
 - 响应式界面与原创 SVG 场景；无外部字体、图片、追踪或网络游戏服务。
+- 游戏占满窗口，页面不上下滚动。出发准备分三步；选项、物品与记录按窗口大小分页，休整、路线、反馈、复盘在独立面板中打开。
 
 ## 本地运行与检查
 
@@ -25,7 +26,7 @@ python3 -m http.server 8765 --bind 127.0.0.1
 打开 `http://127.0.0.1:8765/games/aotai-sim/`。ES modules 需要 HTTP 服务。
 
 ```sh
-node --test games/aotai-sim/engine.test.mjs games/aotai-sim/app.test.mjs
+node --test games/aotai-sim/engine.test.mjs games/aotai-sim/app.test.mjs games/aotai-sim/ui.test.mjs
 ```
 
 规则测试覆盖预算、负重、不可变状态、条件选项、耗材、延迟病痛、路线与回溯、互信、救援时限、存档，以及完整故事。页面启动检查使用 DOM 替身核对 HTML 与模块之间的连接，不代替真实浏览器视觉检查。
@@ -35,7 +36,8 @@ node --test games/aotai-sim/engine.test.mjs games/aotai-sim/app.test.mjs
 `data.mjs`：物品、节点、原创剧情、配装与成就。
 `engine.mjs`：确定性规则和状态迁移，无 DOM 或网络依赖。
 `app.mjs`：界面、自动存档、背包、回溯与导出。
-`index.html` / `style.css`：静态页面与响应式样式。
+`ui.mjs`：窗口大小与分页规则。
+`index.html` / `style.css` / `viewport.css`：页面、视觉样式与窗口布局。
 
 v2 使用独立存档键 `aotai-story-v2`，不会覆盖或误读旧版 v1 的存档。
 

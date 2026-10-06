@@ -7,22 +7,17 @@
   <meta name="description" content="鳌太·每一步 2.0：采购装备、管理补给、探索分支故事。在风雪之间，你的每次决定都会改变后来的路。">
   <title>鳌太 · 每一步｜风雪之间</title>
   <link rel="stylesheet" href="./style.css?v=2">
-  <script type="module" src="./app.mjs?v=2"></script>
+  <link rel="stylesheet" href="./viewport.css?v=3">
+  <script type="module" src="./app.mjs?v=3"></script>
 </head>
 <body>
   <header class="site-header">
     <a class="brand" href="#" aria-label="鳌太每一步"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="m3 31 13-23 8 14 5-8 9 17M11 17l5 4 4-5M24 22l5 3 3-5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span>鳌太 <em>／</em> 每一步<small>AOTAI · BETWEEN THE STORMS</small></span><b class="version">2.0</b></a>
-    <nav aria-label="游戏工具"><button class="text-button" id="bag-button">背包</button><button class="text-button" id="achievements-button">成就</button><button class="text-button" id="help-button">玩法</button><button class="outline-button" id="restart-button">新的旅程 ↗</button></nav>
+    <nav aria-label="游戏工具"><button class="text-button" data-open="action-dialog">休整</button><button class="text-button" id="bag-button">背包</button><button class="text-button" data-open="journal-dialog">复盘</button><button class="text-button desktop-tool" data-open="route-dialog">路线</button><button class="text-button desktop-tool" id="achievements-button">成就</button><button class="text-button desktop-tool" id="help-button">玩法</button><button class="outline-button desktop-tool" id="restart-button">新的旅程 ↗</button><button class="text-button mobile-tool" data-open="menu-dialog">更多</button></nav>
   </header>
   <main>
     <div class="page-heading"><div><span class="eyebrow"><i class="live-dot"></i> 互动生存故事</span><h1>山里没有标准答案。</h1><p>你背着有限的物资，走进一连串无法预演的选择。</p></div><div class="session-label"><span id="scenario-name"></span><b id="clock"></b><small id="turn-label"></small></div></div>
     <div class="game-layout">
-      <aside class="route-column panel" aria-label="旅程与故事线">
-        <div class="panel-heading"><span class="eyebrow">THE JOURNEY</span><b id="progress-label"></b></div><h2>一程山路</h2><p class="subtle">地点为故事节点，连接关系为虚构。</p>
-        <div id="route-list" class="route-list"></div>
-        <div class="mission-card"><span class="eyebrow">山里的另一个人</span><h3>许舟的消息</h3><p id="quest-status"></p><div id="quest-detail"></div></div>
-        <div class="companion-card" id="companion-card"></div>
-      </aside>
       <section class="story-column" aria-label="当前场景与决策">
         <div class="landscape" id="landscape">
           <div class="scene-header"><div><span class="eyebrow light" id="chapter-number"></span><h2 id="location-name"></h2><span id="location-detail"></span></div><div class="weather-badge" id="weather-badge"></div></div>
@@ -46,14 +41,14 @@
           <div class="scene-footer"><span id="terrain-label"></span><span id="weather-detail"></span></div>
         </div>
         <article class="story-card panel">
-          <div class="story-kicker"><span id="event-category" class="eyebrow"></span><span id="event-count" class="subtle"></span></div>
+          <div class="story-kicker"><span id="event-category" class="eyebrow"></span><div><span id="event-count" class="subtle"></span><button class="text-button" data-open="story-dialog">完整情境 ↗</button></div></div>
           <h2 id="story-title"></h2><p id="story-text"></p>
           <div class="story-context" id="story-context"></div>
           <div id="choices" class="choices" role="group" aria-label="当前决策选项"></div>
+          <div id="choice-pagination" class="pagination" aria-label="决策选项分页"></div>
           <div class="commit-panel"><div><small>这个决定，将成为后面故事的一部分。</small><strong id="selected-label"></strong></div><button class="primary-button" id="commit-button">做出决定 <span>→</span></button></div>
         </article>
-        <div class="feedback-panel" id="feedback-panel" aria-live="polite" aria-atomic="true"></div>
-        <section class="camp-panel panel"><div class="panel-heading"><div><span class="eyebrow">TAKE A BREATH</span><h3>先照顾眼前的状态</h3></div><button class="text-button" data-open="bag-dialog">打开背包 ↗</button></div><div class="quick-items" id="quick-items"></div><div class="utilities" id="utilities"></div><p class="subtle">补给、停留、治疗都会计入时间。遇到事件时也可以先准备，再决定。</p></section>
+        <div class="action-dock"><div id="last-action" aria-live="polite" aria-atomic="true">先观察，再做出决定。</div><div><button class="text-button" id="feedback-button" data-open="feedback-dialog" disabled>本步反馈 ↗</button><button class="outline-button" data-open="action-dialog">补给 / 休整</button></div></div>
       </section>
       <aside class="status-column" aria-label="人物状态与物资">
         <section class="panel status-panel"><div class="panel-heading"><span class="eyebrow">YOUR CONDITION</span><span class="risk-badge" id="risk-badge"></span></div><h2>你与这只背包</h2><div id="stats" class="stats"></div><div class="minor-stats" id="minor-stats"></div><div id="conditions" class="conditions"></div></section>
@@ -62,19 +57,40 @@
         <button class="journal-link" id="journal-button"><span>↶</span><div><b>如果当时换个选择？</b><small>打开每一步的记录与回溯</small></div></button>
       </aside>
     </div>
-    <section class="journal-section panel" id="journal-section"><div class="journal-heading"><div><span class="eyebrow">YOUR FOOTPRINTS</span><h2>每一步，都有回声。</h2></div><div><button class="text-button" id="export-button">导出记录 ↗</button><button class="outline-button" id="undo-button">重选上一步 ↶</button></div></div><div id="branch-note"></div><div id="journal"></div><button id="more-log" class="text-button" hidden>显示全部记录 ↓</button></section>
   </main>
   <footer><span>鳌太 · 每一步 <em>／</em> 风雪之间</span><span>虚构互动故事 · 非真实路线与生存预测 <button class="text-button" data-open="help-dialog">制作说明 ↗</button></span></footer>
 
+
   <dialog id="setup-dialog" class="setup-dialog">
-    <div class="setup-banner"><div><span class="eyebrow light">AOTAI / A NEW JOURNEY</span><h2>先决定，背什么进山。</h2><p>有限的预算和重量。每一件装备，都是留给未来的选项。</p></div><button class="close-button" id="close-setup" aria-label="关闭出发准备" hidden>×</button></div>
-    <div class="setup-content"><div id="resume-panel" class="resume-panel" hidden></div><div class="setup-section-label"><span>01 / 选择故事</span><label class="seed-label">故事种子 <input id="seed-input" type="number" min="0" max="999999999" step="1" value="261006"><button type="button" class="icon-button" id="random-seed" aria-label="随机故事种子">↻</button></label></div><div id="scenario-options" class="scenario-options"></div><div class="setup-section-label"><span>02 / 选择背包</span><span class="subtle">容量不等于体力，少背一点会走得更轻松。</span></div><div id="backpack-options" class="backpack-options"></div><div class="setup-section-label"><span>03 / 逐件准备</span><div id="presets" class="presets"></div></div><div class="shop-layout"><div><div class="shop-toolbar"><div id="shop-tabs" class="shop-tabs" role="group" aria-label="装备分类"></div><button class="text-button" id="clear-cart">清空物品</button></div><div id="shop-items" class="shop-items"></div></div><aside class="packing-summary"><span class="eyebrow">PACKING LIST</span><h3>背包里有什么</h3><div id="packing-list"></div><div id="packing-notes"></div></aside></div></div>
-    <div class="setup-footer"><div class="cart-totals"><div><small>剩余预算</small><strong id="cart-money"></strong></div><div><small>总负重 / 容量</small><strong id="cart-weight"></strong><div class="weight-track"><i id="cart-weight-fill"></i></div></div><p id="cart-error" role="status"></p></div><button class="primary-button" id="start-button">带上这些，开始旅程 <span>→</span></button></div>
+    <div class="setup-banner"><div><span class="eyebrow light">AOTAI / A NEW JOURNEY</span><h2>先决定，背什么进山。</h2><p>有限的预算和重量。每件装备，都是未来的选项。</p></div><button class="close-button" id="close-setup" aria-label="关闭出发准备" hidden>×</button></div>
+    <nav id="prep-navigation" class="prep-navigation" aria-label="出发准备步骤"><button data-prep="0">01 选择故事</button><button data-prep="1">02 选择背包</button><button data-prep="2">03 准备物资</button></nav>
+    <div class="setup-content">
+      <section id="prep-story" class="prep-pane"><div id="resume-panel" class="resume-panel" hidden></div><div class="setup-section-label"><span>选择这次旅程</span><label class="seed-label">故事种子 <input id="seed-input" type="number" min="0" max="999999999" step="1" value="261006"><button type="button" class="icon-button" id="random-seed" aria-label="随机故事种子">↻</button></label></div><div id="scenario-options" class="scenario-options"></div><div id="scenario-pagination" class="pagination" aria-label="故事选择分页"></div><p class="prep-intro">同一种子可以重玩。途中可以撤离、求援，也可以回到任一步重新选择。</p></section>
+      <section id="prep-backpack" class="prep-pane" hidden><div class="setup-section-label"><span>能装下，也要能背得动。</span></div><div id="backpack-options" class="backpack-options"></div><div id="backpack-pagination" class="pagination" aria-label="背包选择分页"></div><p class="prep-intro">负重会持续增加体力消耗。背包容量限制出发准备，途中拿到的新物资也要计入重量。</p></section>
+      <section id="prep-equipment" class="prep-pane" hidden><div class="setup-section-label"><span>逐件准备，或选一份配装。</span><div id="presets" class="presets"></div></div><div class="shop-layout"><div class="shop-column"><div class="shop-toolbar"><div id="shop-tabs" class="shop-tabs" role="group" aria-label="装备分类"></div><button class="text-button" id="clear-cart">清空物品</button></div><div id="shop-items" class="shop-items"></div><div id="shop-pagination" class="pagination" aria-label="物品分页"></div></div><aside class="packing-summary"><span class="eyebrow">PACKING LIST</span><h3>已装入背包</h3><div id="packing-list"></div><div id="packing-notes"></div></aside></div></section>
+    </div>
+    <div class="setup-footer"><div class="cart-totals"><div><small>剩余预算</small><strong id="cart-money"></strong></div><div><small>总负重 / 容量</small><strong id="cart-weight"></strong><div class="weight-track"><i id="cart-weight-fill"></i></div></div><p id="cart-error" role="status"></p></div><div class="prep-actions"><button class="outline-button" id="prep-back" hidden>← 上一步</button><button class="primary-button" id="prep-next">选择背包 →</button><button class="primary-button" id="start-button" hidden>开始旅程 →</button></div></div>
   </dialog>
-  <dialog id="bag-dialog" class="bag-dialog"><div class="dialog-heading"><div><span class="eyebrow">EVERY GRAM COUNTS</span><h2>背包里的选项</h2></div><button class="close-button" data-close="bag-dialog" aria-label="关闭背包">×</button></div><p class="subtle" id="bag-summary"></p><div id="bag-items"></div><p class="subtle">使用物品会推进时间。放弃物品不会耗时，但本分支无法取回。装备携带时自动生效。</p></dialog>
+  <dialog id="route-dialog" class="route-dialog"><div class="dialog-heading"><div><span class="eyebrow">THE JOURNEY</span><h2>一程山路 <small id="progress-label"></small></h2></div><button class="close-button" data-close="route-dialog" aria-label="关闭路线">×</button></div><div id="route-navigation" class="route-navigation"></div><div id="route-map-pane"><p class="subtle">故事节点与连接关系为虚构。</p><div id="route-list" class="route-list"></div></div><div id="route-detail-pane" hidden><div class="mission-card"><span class="eyebrow">山里的另一个人</span><h3>许舟的消息</h3><p id="quest-status"></p><div id="quest-detail"></div></div><div class="companion-card" id="companion-card"></div><div id="route-forecast" class="route-forecast"></div><p class="subtle">天气趋势按当前地点估计。</p></div></dialog>
+  <dialog id="story-dialog" class="story-dialog"><div class="dialog-heading"><div><span class="eyebrow">THIS MOMENT</span><h2 id="story-full-title"></h2></div><button class="close-button" data-close="story-dialog" aria-label="关闭情境">×</button></div><p id="story-full-text"></p><button class="outline-button" data-close="story-dialog">回到决策 →</button></dialog>
+  <dialog id="action-dialog" class="action-dialog"><div class="dialog-heading"><div><span class="eyebrow">TAKE A BREATH</span><h2>先照顾眼前的状态</h2></div><button class="close-button" data-close="action-dialog" aria-label="关闭休整面板">×</button></div><p id="action-condition" class="subtle" aria-live="polite"></p><div class="quick-items" id="quick-items"></div><div class="utilities" id="utilities"></div><div id="utility-pagination" class="pagination" aria-label="休整行动分页"></div><p class="subtle">补给、治疗和停留都计入时间。可以先准备，再决定。</p></dialog>
+  <dialog id="feedback-dialog" class="feedback-dialog"><div class="dialog-heading"><div><span class="eyebrow">THE CONSEQUENCE</span><h2>这一步的回声</h2></div><button class="close-button" data-close="feedback-dialog" aria-label="关闭反馈">×</button></div><div class="feedback-panel" id="feedback-panel"></div><div id="feedback-pagination" class="pagination" aria-label="反馈分页"></div></dialog>
+  <dialog id="journal-dialog" class="journal-dialog"><section class="journal-section" id="journal-section"><div class="dialog-heading"><div><span class="eyebrow">YOUR FOOTPRINTS</span><h2>每一步，都有回声。</h2></div><button class="close-button" data-close="journal-dialog" aria-label="关闭复盘">×</button></div><div class="journal-tools"><button class="text-button" id="export-button">导出记录 ↗</button><button class="outline-button" id="undo-button">重选上一步 ↶</button></div><div id="branch-note"></div><div id="journal"></div><div id="journal-pagination" class="pagination" aria-label="记录分页"></div></section></dialog>
+  <dialog id="bag-dialog" class="bag-dialog"><div class="dialog-heading"><div><span class="eyebrow">EVERY GRAM COUNTS</span><h2>背包里的选项</h2></div><button class="close-button" data-close="bag-dialog" aria-label="关闭背包">×</button></div><p class="subtle" id="bag-summary"></p><div id="bag-items"></div><div id="bag-pagination" class="pagination" aria-label="背包分页"></div><p class="subtle">装备自动生效。使用物品计入时间，放弃后本分支无法取回。</p></dialog>
   <dialog id="result-dialog" class="result-dialog"><div id="result-content"></div></dialog>
-  <dialog id="achievements-dialog" class="achievements-dialog"><div class="dialog-heading"><div><span class="eyebrow">STORIES YOU BROUGHT HOME</span><h2>那些留下的回声</h2></div><button class="close-button" data-close="achievements-dialog" aria-label="关闭成就">×</button></div><p class="subtle">成就保存在当前浏览器。重选故事不会抹去已经走过的归途。</p><div id="achievement-list"></div></dialog>
-  <dialog id="help-dialog" class="help-dialog"><div class="dialog-heading"><div><span class="eyebrow">HOW TO PLAY</span><h2>把每一步想清楚。</h2></div><button class="close-button" data-close="help-dialog" aria-label="关闭玩法">×</button></div><ol><li><b>先配装。</b>预算 16,000 元，逐件购买。装备会自动生效，也会解锁事件选项。可以用推荐配装开始，再自行调整。</li><li><b>先观察。</b>事件选择、行进、扎营和补给都会消耗游戏时间。生命、体力、保温、精神、饱腹、补水互相影响；背包里有口粮，不代表已经吃过。</li><li><b>看后果。</b>某些病痛会延迟出现。地图、灯、炉具、燃料、医疗包和电量有不同用途；负重增加会让每一段更费力。</li><li><b>记住等待的人。</b>找到许舟后，留下物资、报告位置和救援接近是不同步骤。窗口耗尽之后，之后的补救也无法改写这一段。</li><li><b>可以改变目标。</b>沿来路撤离和等待救援都是完整结局。救援等待期间，你仍要补给、保温并守住定位点。</li><li><b>试试另一条故事。</b>在记录中回到任一步，同一种子会保留此前的情境。自动存档可继续，完整记录可导出为 JSON。</li></ol><p class="subtle">快捷键：1–5 选择主决策，B 打开背包，R 重选上一步。按钮均可使用键盘操作。</p><div class="help-note"><b>制作说明</b><p>玩法参考<a href="https://cyberhiking.com/about" target="_blank" rel="noopener">小白薯《赛博徒步之生死鳌太线》</a>的装备管理、条件事件与分支故事机制；界面、文字、角色和规则为本游戏重新创作。</p><p>鳌太区域禁止违规穿越。游戏使用抽象地点连接、虚构天气与数值，不提供真实导航，不预测生存概率。保温等 0–100 数值是游戏状态，不是临床指标。</p><a href="https://www.peopleapp.com/rmharticle/30051159988" target="_blank" rel="noopener">中国气象局：鳌太气象风险 ↗</a><br><a href="https://www.sport.gov.cn/n20001280/n20745751/c29349845/content.html" target="_blank" rel="noopener">体育总局：严禁违规徒步穿越通知 ↗</a></div></dialog>
+  <dialog id="achievements-dialog" class="achievements-dialog"><div class="dialog-heading"><div><span class="eyebrow">STORIES YOU BROUGHT HOME</span><h2>那些留下的回声</h2></div><button class="close-button" data-close="achievements-dialog" aria-label="关闭成就">×</button></div><p class="subtle">成就保存在当前浏览器。</p><div id="achievement-list"></div><div id="achievement-pagination" class="pagination" aria-label="成就分页"></div></dialog>
+  <dialog id="help-dialog" class="help-dialog"><div class="dialog-heading"><div><span class="eyebrow">HOW TO PLAY</span><h2>把每一步想清楚。</h2></div><button class="close-button" data-close="help-dialog" aria-label="关闭玩法">×</button></div><div id="help-pages">
+    <section data-help-page="0"><h3>01 / 先配装</h3><p>预算 16,000 元，逐件购买。装备会自动生效，也会解锁事件选项。可以使用推荐配装，再自行调整。</p><p>出发准备分为故事、背包、物资三步。使用分类与分页按钮查看全部物品。</p></section>
+    <section data-help-page="1" hidden><h3>02 / 先观察</h3><p>事件选择、行进、扎营和补给都会消耗游戏时间。生命、体力、保温、精神、饱腹、补水互相影响。</p><p>背包里有口粮，不代表已经吃过。使用上方「休整」或「背包」按钮照顾身体。</p></section>
+    <section data-help-page="2" hidden><h3>03 / 看后果</h3><p>某些病痛会延迟出现。地图、灯、炉具、燃料、医疗包和电量有不同用途。负重增加会让每一段更费力。</p><p>下方「本步反馈」显示变化与原因，长反馈可以分页查看。</p></section>
+    <section data-help-page="3" hidden><h3>04 / 记住等待的人</h3><p>找到许舟后，留下物资、报告位置和救援接近是不同步骤。窗口耗尽后，之后的补救也无法改写这一段。</p><p>在路线面板中查看他的状态；重要的剩余时间也会出现在当前决策中。</p></section>
+    <section data-help-page="4" hidden><h3>05 / 可以改变目标</h3><p>沿来路撤离和等待救援都是完整结局。等待期间仍要补给、保温并守住定位点。</p><p>需要时打开「休整」请求救援或决定撤离。</p></section>
+    <section data-help-page="5" hidden><h3>06 / 试试另一条故事</h3><p>复盘记录可以回到任一步，同一种子保留此前的情境。自动存档可继续，也可以导出完整 JSON 记录。</p><p>快捷键：1–5 选择决策，B 打开背包，R 重选上一步。</p></section>
+    <section data-help-page="6" hidden><h3>制作说明</h3><p>玩法参考<a href="https://cyberhiking.com/about" target="_blank" rel="noopener">小白薯《赛博徒步之生死鳌太线》</a>的装备管理、条件事件与分支机制。界面、文字、角色和规则重新创作。</p></section>
+    <section data-help-page="7" hidden><h3>模型边界与依据</h3><p>鳌太区域禁止违规穿越。地点连接、天气和数值为虚构，不提供真实导航，不预测生存概率。保温等 0–100 数值为游戏状态，不是临床指标。</p><p><a href="https://www.peopleapp.com/rmharticle/30051159988" target="_blank" rel="noopener">中国气象局：气象风险 ↗</a><br><a href="https://www.sport.gov.cn/n20001280/n20745751/c29349845/content.html" target="_blank" rel="noopener">体育总局：严禁违规穿越通知 ↗</a></p></section>
+    </div><div id="help-pagination" class="pagination" aria-label="玩法分页"></div></dialog>
+  <dialog id="item-dialog" class="item-dialog"><div class="dialog-heading"><h2 id="item-title"></h2><button class="close-button" data-close="item-dialog" aria-label="关闭物品说明">×</button></div><p id="item-description"></p><p class="subtle" id="item-meta"></p></dialog>
+  <dialog id="menu-dialog" class="menu-dialog"><div class="dialog-heading"><h2>旅程工具</h2><button class="close-button" data-close="menu-dialog" aria-label="关闭工具">×</button></div><button class="outline-button" data-open="route-dialog">路线与许舟的消息</button><button class="outline-button" data-achievements>成就</button><button class="outline-button" data-open="help-dialog">玩法与制作说明</button><button class="outline-button" data-new>新的旅程</button></dialog>
   <div id="toast" class="toast" role="status" hidden></div>
 </body>
 </html>
