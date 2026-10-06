@@ -6,11 +6,11 @@
 
 - 本体和中文资源取自 4399 旧版游戏加载器指向的公开资源。
 - 全部 11 段开场 / 剧情 / 转场动画与两种结局动画随页面一同部署，游戏内不依赖第三方服务器。
-- 原版在线保存接口失效；采用 [MHHF 档案](https://www.mhhf.com/game/play/5450) 中的本机保存修复代码。2397 个 SWF 数据块中只替换 12 块（7 块中文字体名称 / 文本绑定、1 块存档按钮、4 块 ActionScript 兼容代码），其余 2385 块逐字节保持不变。图形、动画与地图保留原版数据；中文资源仅改 1 个保存成功提示，为本机存档修复者 PolarZero 署名。
+- 原版在线保存接口失效；采用 [MHHF 档案](https://www.mhhf.com/game/play/5450) 中的本机保存修复代码。2397 个 SWF 数据块中只替换 12 块（7 块中文字体名称 / 文本绑定、1 块存档按钮、4 块 ActionScript 兼容代码），其余 2385 块逐字节保持不变。图形、动画与地图保留原版数据；中文资源的保存成功提示为本机存档修复者 PolarZero 署名，旧域名校验另补上本 GitHub Pages 域名（仅替换两处等长域名字符串）。
 - 兼容代码使用 Flash SharedObject，由 Ruffle 保存在浏览器本机。旧版 4399 账号、积分排行榜与勋章服务器功能不提供。
 - 使用官方 [Ruffle 0.6.0](https://github.com/ruffle-rs/ruffle/releases/tag/v0.6.0) 运行环境，文件随站点部署，不要求安装 Flash 插件。
 
-原始资源地址、文件大小、SHA-256 和变更清单记录在 `original/provenance.json`。`tools/build-compat.py` 可以从指定哈希的官方本体和本机保存档案复现兼容修复。
+原始资源地址、文件大小、SHA-256 和变更清单记录在 `original/provenance.json`。`tools/build-compat.py` 与 `tools/build-resource-compat.py` 可以从指定哈希的官方本体和本机保存档案复现兼容修复。
 
 ## 操作
 

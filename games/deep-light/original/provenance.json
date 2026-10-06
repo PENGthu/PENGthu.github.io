@@ -27,7 +27,14 @@
     ],
     "totalTags": 2397,
     "unchangedTags": 2385,
-    "note": "12 main SWF tags differ: 7 Chinese font-name / text bindings, 1 local save button, 4 ActionScript compatibility classes. Every other tag is byte-identical to the 4399 original. Common resources differ in one save-confirmation text field to credit the local-save repair by PolarZero."
+    "note": "12 main SWF tags differ: 7 Chinese font-name / text bindings, 1 local save button, 4 ActionScript compatibility classes. Every other tag is byte-identical to the 4399 original. Common resources differ in one save-confirmation text field to credit the local-save repair by PolarZero.",
+    "resourcePatch": {
+      "tagIndices": [
+        104,
+        319
+      ],
+      "note": "Archive local-save confirmation credit plus 2 equal-length allowed-origin strings for https://pengthu.github.io. All visual assets and ActionScript offsets remain identical."
+    }
   },
   "assets": [
     {
@@ -39,8 +46,8 @@
     {
       "path": "game/lang/FSADIGBOY_RES.swf",
       "source": "https://www.mhhf.com/files/game/5450/game/lang/FSADIGBOY_RES.swf",
-      "bytes": 913944,
-      "sha256": "d3ac8cbea8aea6a0317d9b767d8d01673d8c34eaceb8b6c9bd034827c1ad4352",
+      "bytes": 913922,
+      "sha256": "379a43bd37c38f3f74d27435c1b6179790a00c740949ddae174feef3a18e3d7b",
       "originalSource": "https://nitrome.com.4399.com/4399swf/upload_swf/ftp5/haibo/20110709/2/game/lang/FSADIGBOY_RES.swf"
     },
     {
