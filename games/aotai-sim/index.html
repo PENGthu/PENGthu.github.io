@@ -4,16 +4,17 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#090e0d">
-  <meta name="description" content="鳌太·每一步 3.0：采购装备、管理补给、探索分支故事。在风雪之间，你的每次决定都会改变后来的路。">
+  <meta name="description" content="鳌太·每一步 4.0：采购装备、管理补给、探索分支故事。人物对话、现场观察与分支决策，让每一步改变后来的路。">
   <title>鳌太 · 每一步｜风雪之间</title>
-  <link rel="stylesheet" href="./style.css?v=8">
-  <script type="module" src="./app.mjs?v=8"></script>
+  <link rel="stylesheet" href="./style.css?v=11">
+  <link rel="stylesheet" href="./cinema.css?v=11">
+  <script type="module" src="./app.mjs?v=11"></script>
 </head>
 <body>
   <div id="scene-bg" class="scene-bg forest" aria-hidden="true"></div>
   <div class="scene-shade" aria-hidden="true"></div>
   <header class="site-header">
-    <a class="brand" href="#" id="home-link" aria-label="返回主菜单"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="m3 31 13-23 8 14 5-8 9 17M11 17l5 4 4-5M24 22l5 3 3-5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span>鳌太 <em>／</em> 每一步<small>AOTAI · BETWEEN THE STORMS</small></span><b class="version">3.0</b></a>
+    <a class="brand" href="#" id="home-link" aria-label="返回主菜单"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="m3 31 13-23 8 14 5-8 9 17M11 17l5 4 4-5M24 22l5 3 3-5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span>鳌太 <em>／</em> 每一步<small>AOTAI · BETWEEN THE STORMS</small></span><b class="version">4.0</b></a>
     <nav aria-label="游戏工具"><button class="text-button mobile-tool" data-open="condition-dialog"><span data-icon="health"></span>状态</button><button class="text-button" data-open="action-dialog"><span data-icon="camp"></span>休整</button><button class="text-button" id="bag-button"><span data-icon="backpack"></span>背包</button><button class="text-button" data-open="journal-dialog"><span data-icon="journal"></span>复盘</button><button class="text-button desktop-tool" data-open="route-dialog"><span data-icon="compass"></span>路线</button><button class="text-button desktop-tool" id="achievements-button"><span data-icon="trophy"></span>成就</button><button class="text-button desktop-tool" id="help-button"><span data-icon="help"></span>玩法</button><button class="outline-button desktop-tool" id="restart-button">新的旅程 ↗</button><button class="text-button mobile-tool" data-open="menu-dialog">更多</button></nav>
   </header>
   <main>
@@ -22,10 +23,11 @@
       <section class="story-column" aria-label="当前场景与决策">
         <div class="landscape" id="landscape">
           <div class="scene-header"><div><span class="eyebrow light" id="chapter-number"></span><h2 id="location-name"></h2><span id="location-detail"></span></div><div class="weather-badge" id="weather-badge"></div></div>
+          <div id="scene-theatre" class="scene-theatre"></div>
           <div class="scene-footer"><span id="terrain-label"></span><span id="weather-detail"></span></div>
         </div>
         <article class="story-card panel">
-          <div class="story-kicker"><span id="event-category" class="eyebrow"></span><div><span id="event-count" class="subtle"></span><button class="text-button" data-open="story-dialog">完整情境 ↗</button></div></div>
+          <div class="story-kicker"><span id="event-category" class="eyebrow"></span><div><span id="event-count" class="subtle"></span><button class="text-button" data-open="story-dialog">放大情境 ↗</button></div></div>
           <h2 id="story-title"></h2><p id="story-text"></p>
           <div class="story-context" id="story-context"></div>
           <div id="choices" class="choices" role="group" aria-label="当前决策选项"></div>
@@ -47,7 +49,7 @@
 
   <dialog id="home-dialog" class="home-dialog" aria-labelledby="home-title">
     <div class="home-backdrop" aria-hidden="true"></div><div class="snowfall" aria-hidden="true"></div>
-    <div class="home-top"><span><span data-icon="mountain"></span> 一场关于选择的旅程</span><span>v3.0</span></div>
+    <div class="home-top"><span><span data-icon="mountain"></span> 一场关于选择的旅程</span><span>v4.0</span></div>
     <div class="home-content"><span class="home-eyebrow">AOTAI · BETWEEN THE STORMS</span><h1 id="home-title">鳌太 · 每一步</h1><div class="home-subtitle"><i></i><span>风 雪 之 间</span><i></i></div><p class="home-quote">“山里没有标准答案。<br>你能带回的，是每一个决定。”</p><div class="home-actions"><button class="primary-button home-start" id="home-start"><span data-icon="play"></span>开始新旅程</button><button class="outline-button" id="home-resume" hidden><span data-icon="clock"></span>继续上次旅程</button><button class="outline-button" id="home-archive"><span data-icon="journal"></span>我的旅程档案</button></div><div class="home-links"><button class="text-button" data-open="help-dialog">玩法说明</button><span>·</span><button class="text-button" data-achievements>成就档案</button><span>·</span><a href="https://cyberhiking.com/" target="_blank" rel="noopener">参考原作 ↗</a></div></div>
     <div class="home-bottom"><span>虚构山地故事 · 非真实导航或生存预测</span><span>选择 · 生存 · 回溯</span></div>
   </dialog>
@@ -63,7 +65,9 @@
     <div class="setup-footer"><div class="cart-totals"><div><small>剩余预算</small><strong id="cart-money"></strong></div><div><small>总负重 / 容量</small><strong id="cart-weight"></strong><div class="weight-track"><i id="cart-weight-fill"></i></div></div><p id="cart-error" role="status"></p></div><div class="prep-actions"><button class="outline-button" id="prep-back" hidden>← 上一步</button><button class="primary-button" id="prep-next">选择背包 →</button><button class="primary-button" id="start-button" hidden>选好了，出发 →</button></div></div>
   </dialog>
   <dialog id="route-dialog" class="route-dialog"><div class="dialog-heading"><div><span class="eyebrow">THE JOURNEY</span><h2>一程山路 <small id="progress-label"></small></h2></div><button class="close-button" data-close="route-dialog" aria-label="关闭路线">×</button></div><div id="route-navigation" class="route-navigation"></div><div id="route-map-pane"><p class="subtle">故事节点与连接关系为虚构。</p><div id="route-list" class="route-list"></div></div><div id="route-detail-pane" hidden><div class="mission-card"><span class="eyebrow">山里的另一个人</span><h3>许舟的消息</h3><p id="quest-status"></p><div id="quest-detail"></div></div><div class="companion-card" id="companion-card"></div><div id="route-forecast" class="route-forecast"></div><p class="subtle">天气趋势按当前地点估计。</p></div></dialog>
-  <dialog id="story-dialog" class="story-dialog"><div class="dialog-heading"><div><span class="eyebrow">THIS MOMENT</span><h2 id="story-full-title"></h2></div><button class="close-button" data-close="story-dialog" aria-label="关闭情境">×</button></div><p id="story-full-text"></p><button class="outline-button" data-close="story-dialog">回到决策 →</button></dialog>
+  <dialog id="story-dialog" class="story-dialog"><div class="dialog-heading"><div><span class="eyebrow">THIS MOMENT</span><h2 id="story-full-title"></h2></div><button class="close-button" data-close="story-dialog" aria-label="关闭情境">×</button></div><div id="scene-full" class="scene-full"></div><p id="story-full-text"></p><button class="outline-button" data-close="story-dialog">回到决策 →</button></dialog>
+  <dialog id="observation-dialog" class="observation-dialog"><div class="dialog-heading"><div><span class="eyebrow">观察现场 · 不消耗时间</span><h2 id="observation-title"></h2></div><button class="close-button" data-close="observation-dialog" aria-label="关闭观察">×</button></div><p id="observation-text"></p><button class="outline-button" data-close="observation-dialog">回到情境 →</button></dialog>
+  <dialog id="transcript-dialog" class="transcript-dialog"><div class="dialog-heading"><div><span class="eyebrow">这段相遇</span><h2>对话与情境记录</h2></div><button class="close-button" data-close="transcript-dialog" aria-label="关闭对话记录">×</button></div><div id="transcript-lines"></div><div id="transcript-pagination" class="pagination" aria-label="对话记录分页"></div><p class="subtle">阅读对话与观察线索不消耗游戏时间。</p></dialog>
   <dialog id="action-dialog" class="action-dialog"><div class="dialog-heading"><div><span class="eyebrow">TAKE A BREATH</span><h2>先照顾眼前的状态</h2></div><button class="close-button" data-close="action-dialog" aria-label="关闭休整面板">×</button></div><p id="action-condition" class="subtle" aria-live="polite"></p><div class="quick-items" id="quick-items"></div><div class="utilities" id="utilities"></div><div id="utility-pagination" class="pagination" aria-label="休整行动分页"></div><p class="subtle">补给、治疗和停留都计入时间。可以先准备，再决定。</p></dialog>
   <dialog id="feedback-dialog" class="feedback-dialog"><div class="dialog-heading"><div><span class="eyebrow">THE CONSEQUENCE</span><h2>这一步的回声</h2></div><button class="close-button" data-close="feedback-dialog" aria-label="关闭反馈">×</button></div><div class="feedback-panel" id="feedback-panel"></div><div id="feedback-pagination" class="pagination" aria-label="反馈分页"></div></dialog>
   <dialog id="journal-dialog" class="journal-dialog"><section class="journal-section" id="journal-section"><div class="dialog-heading"><div><span class="eyebrow">YOUR FOOTPRINTS</span><h2>每一步，都有回声。</h2></div><button class="close-button" data-close="journal-dialog" aria-label="关闭复盘">×</button></div><div class="journal-tools"><button class="text-button" id="export-button">导出记录 ↗</button><button class="outline-button" id="undo-button">重选上一步 ↶</button></div><div id="branch-note"></div><div id="journal"></div><div id="journal-pagination" class="pagination" aria-label="记录分页"></div></section></dialog>

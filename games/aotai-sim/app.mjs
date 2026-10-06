@@ -1,7 +1,9 @@
 import {createGame,step,getActions,weatherAt,forecast,nodeAt,weightOf,timeLabel,riskLevel,questLabel,conditionLabel,validateSave,cartSummary,clamp} from './engine.mjs?v=2';
 import {SCENARIOS,BACKPACKS,ITEMS,PRESETS,NODES,EVENTS,CATEGORIES,ACHIEVEMENTS} from './data.mjs?v=2';
-import {layoutFor,pageSlice} from './ui.mjs?v=8';
-import {icon,gearIcon} from './icons.mjs?v=8';
+import {layoutFor,pageSlice} from './ui.mjs?v=11';
+import {icon,gearIcon} from './icons.mjs?v=11';
+import {sceneFor,sceneKey,replyFor,BACKDROPS} from './scenes.mjs?v=11';
+import {theatreMarkup,transcriptMarkup} from './cinema.mjs?v=11';
 
 const $=id=>document.getElementById(id);
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -9,7 +11,8 @@ const STORAGE='aotai-story-v2',PROFILE='aotai-achievements-v2';
 const metricNames={health:'生命',energy:'体力',warmth:'保温',san:'精神',satiety:'饱腹',hydration:'补水',battery:'电量',durability:'装备',weight:'负重'};
 const utilitySymbols={rest:'◷',camp:'△',heat:'♨',refill:'◉',repair:'⌘',sos:'◎',wait:'◷',retreat:'↙',report:'◎',resupply:'▣'};
 let state=createGame(),history=[],branch=null,started=false,selected='',lastReport=null,toastTimer,feedbackReport=null,prepStep=0;
-const pages={choices:0,shop:0,bag:0,journal:0,achievements:0,feedback:0,help:0,result:0,utilities:0,scenarios:0,backpacks:0,route:0};
+let dramaKey='',dialogueCursor=0,observed=new Set();
+const pages={transcript:0,choices:0,shop:0,bag:0,journal:0,achievements:0,feedback:0,help:0,result:0,utilities:0,scenarios:0,backpacks:0,route:0};
 let cart=structuredClone(PRESETS.balanced),scenario='letter',category='wear',saved=null,unlocked=[];
 function validReport(r){return !!r&&typeof r.title==='string'&&typeof r.location==='string'&&Number.isFinite(r.turn)&&Number.isFinite(r.minutes)&&r.minutes>=0&&r.before&&r.after&&Object.keys(metricNames).every(k=>Number.isFinite(r.before[k])&&Number.isFinite(r.after[k]))&&Array.isArray(r.notes)&&r.notes.every(n=>typeof n==='string');}
 try{
@@ -58,6 +61,7 @@ function renderScene(){
   $('clock').textContent=timeLabel(state);$('turn-label').textContent=`第 ${String(state.turn+1).padStart(2,'0')} 步 · ${state.quest?.status==='waiting'?`待报告 ${Math.max(0,Math.ceil(state.quest.deadline-state.clock))} 小时`:`种子 ${state.seed}`}`;
   $('chapter-number').textContent=`CHAPTER ${String(index+1).padStart(2,'0')} / ${state.returning?'归途':loc.chapter}`;
   $('location-name').textContent=loc.name;$('location-detail').textContent=`海拔 ${loc.alt.toLocaleString()} m · ${state.returning?'沿已确认的来路撤回':'虚构山地故事'}`;
+  $('scene-bg').style.backgroundImage=`url('./${BACKDROPS[sceneFor(state).background]}')`;
   $('scene-bg').className=`scene-bg ${loc.scene} ${w.night?'night':''} ${w.inStorm?'storm':''}`;
   $('landscape').className=`landscape ${loc.scene} ${w.night?'night':''} ${w.inStorm?'storm':''}`;
   $('weather-badge').innerHTML=`<span>${w.icon}</span><div><b>${w.kind}</b>${w.temp}°C · ${w.night?'夜间':'白昼'}</div>`;
@@ -76,6 +80,7 @@ function renderStory(){
   $('story-text').textContent=state.outcome?state.outcome.text:state.rescue?'等待不是暂停。气温、饥饿和疲劳仍会变化。用背包里的物资维持状态，在这里等救援接近。':hikerExpired?'时间超过了他可以等待的窗口。你需要带回位置与这段消息。回看此前的停留和物资准备，可以从找到他之前重新选择。':event?event.text:loc.text;
   $('story-full-title').textContent=$('story-title').textContent;
   $('story-full-text').textContent=$('story-text').textContent;
+  renderTheatre();
   const chips=[];
   if(state.companion)chips.push('鹿宁与你同行');
   if(state.quest?.status==='waiting')chips.push(questLabel(state));
@@ -86,7 +91,7 @@ function renderStory(){
   if(state.warmth<30)chips.push('保温状态偏低');if(state.energy<25)chips.push('体力正在吃紧');
   $('story-context').innerHTML=chips.map(c=>`<span class="context-chip ${c.includes('剩余')||c.includes('偏低')?'urgent':''}">${esc(c)}</span>`).join('');
   const p=paginate('choices',main);
-  $('choices').innerHTML=state.outcome?'<button class="outline-button" data-result>查看结局与成就 ↗</button>':state.rescue?'<button class="outline-button" data-open="action-dialog">打开休整面板，等待与补给 →</button>':p.items.map((a,i)=>`<button type="button" class="choice ${selected===a.id?'selected':''}" data-main="${a.id}" title="${esc(a.disabled||a.desc)}" aria-pressed="${selected===a.id}" ${a.disabled?'disabled':''}><span class="choice-number">${a.disabled?'·':p.start+i+1}</span><div><strong>${esc(a.title)}</strong><p>${esc(a.disabled||a.desc)}</p></div><span class="choice-time">${duration(a.minutes)}</span></button>`).join('');
+  $('choices').innerHTML=state.outcome?'<button class="outline-button" data-result>查看结局与成就 ↗</button>':state.rescue?'<button class="outline-button" data-open="action-dialog">打开休整面板，等待与补给 →</button>':p.items.map((a,i)=>`<button type="button" class="choice ${selected===a.id?'selected':''}" data-main="${a.id}" title="${esc(a.disabled||a.desc)}" aria-pressed="${selected===a.id}" ${a.disabled?'disabled':''}><span class="choice-number">${a.disabled?'·':p.start+i+1}</span><div><strong>${esc(replyFor(state,a)?`“${replyFor(state,a)}”`:a.title)}</strong><p>${esc(a.disabled||(replyFor(state,a)?`${a.title} · ${a.desc}`:a.desc))}</p></div><span class="choice-time">${duration(a.minutes)}</span></button>`).join('');
   pager('choice-pagination','choices',p);
   $('commit-button').hidden=!!state.outcome||!!state.rescue;
   $('commit-button').disabled=!started||!selected;
@@ -98,6 +103,23 @@ function renderStory(){
     const a=actions.find(a=>a.id===`use:${id}`),n=state.inventory[id]||0;
     return `<button class="quick-item" data-do="use:${id}" ${!a||a.disabled?'disabled':''} title="${esc(a?.disabled||ITEMS[id].desc)}">${gearIcon(id)} ${ITEMS[id].name.replace(' · 0.5 L','')}<b>×${n}</b></button>`;
   }).join('');
+}
+function renderTheatre(){
+  const key=sceneKey(state);
+  if(key!==dramaKey){dramaKey=key;dialogueCursor=0;observed=new Set();pages.transcript=0;}
+  const scene=sceneFor(state),action=getActions(state).find(a=>a.id===selected&&!a.disabled);
+  const preview=action?(replyFor(state,action)||`${action.title}。${action.desc}`):null;
+  dialogueCursor=Math.max(0,Math.min(dialogueCursor,scene.dialogue.length-1));
+  $('scene-theatre').innerHTML=theatreMarkup(scene,dialogueCursor,preview,observed);
+  $('scene-full').innerHTML=theatreMarkup(scene,dialogueCursor,preview,observed,true);
+  if($('transcript-dialog').open)renderTranscript();
+}
+function renderTranscript(){
+  const scene=sceneFor(state),action=getActions(state).find(a=>a.id===selected&&!a.disabled);
+  const lines=[...scene.dialogue];
+  if(action)lines.push({speaker:'你',kind:'尚未确认',text:replyFor(state,action)||`${action.title}。${action.desc}`});
+  const p=pageSlice(lines,pages.transcript,(globalThis.innerHeight||900)<450?2:3);pages.transcript=p.page;
+  $('transcript-lines').innerHTML=transcriptMarkup(p.items);pager('transcript-pagination','transcript',p);
 }
 function renderStatus(){
   const loc=nodeAt(state),route=NODES.filter(n=>!n.branch);
@@ -162,7 +184,7 @@ function execute(id=selected){
   save();render();
   if(state.outcome){closePanels();pages.result=0;showResult();}
 }
-function closePanels(){['result-dialog','bag-dialog','action-dialog','journal-dialog','feedback-dialog','menu-dialog'].forEach(id=>$(id).close());}
+function closePanels(){['observation-dialog','transcript-dialog','story-dialog','result-dialog','bag-dialog','action-dialog','journal-dialog','feedback-dialog','menu-dialog'].forEach(id=>$(id).close());}
 function rewind(index){
   if(!Number.isInteger(index)||!history[index])return;
   const entry=history[index];branch={turn:entry.report.turn,report:structuredClone(entry.report),outcome:state.outcome?structuredClone(state.outcome):null};
@@ -270,6 +292,10 @@ $('clear-cart').addEventListener('click',()=>{cart.items={};renderSetup();});
 document.addEventListener('click',e=>{
   const button=e.target.closest('button');if(!button||button.disabled)return;
   const d=button.dataset;
+  if(d.dialogue!==undefined){dialogueCursor+=Number(d.dialogue)||0;renderTheatre();document.querySelector(`[data-dialogue="${d.dialogue}"]`)?.focus({preventScroll:true});}
+  if('returnDialogue' in d){selected='';renderStory();}
+  if('transcript' in d){pages.transcript=0;renderTranscript();openDialog('transcript-dialog');}
+  if(d.hotspot!==undefined){const scene=sceneFor(state),index=Number(d.hotspot),point=scene.observations[index];if(point){observed.add(index);$('observation-title').textContent=point.title;$('observation-text').textContent=point.text;renderTheatre();openDialog('observation-dialog');}}
   if(d.main){selected=d.main;renderStory();document.querySelector(`[data-main="${selected}"]`)?.focus({preventScroll:true});}
   if(d.do)execute(d.do);
   if(d.close)$(d.close).close();
@@ -287,7 +313,7 @@ document.addEventListener('click',e=>{
   }
   if(d.page&&Object.hasOwn(pages,d.page)){
     pages[d.page]=Number(d.index);
-    const redraw={choices:renderStory,utilities:renderStory,shop:renderSetup,scenarios:renderSetup,backpacks:renderSetup,bag:renderBag,journal:renderJournal,feedback:renderFeedback,achievements:renderAchievements,help:renderHelp};
+    const redraw={transcript:renderTranscript,choices:renderStory,utilities:renderStory,shop:renderSetup,scenarios:renderSetup,backpacks:renderSetup,bag:renderBag,journal:renderJournal,feedback:renderFeedback,achievements:renderAchievements,help:renderHelp};
     redraw[d.page]?.();
   }
   if(d.prep!==undefined)setPrepStep(d.prep);

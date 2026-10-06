@@ -57,6 +57,12 @@ test('small-window preparation and navigation preserve every item and the game c
   assert.match(elements.get('cart-money').textContent,/821/,'navigation does not buy or discard anything');
   elements.get('start-button').events.click();assert.equal(elements.get('setup-dialog').open,false);
   const before=elements.get('clock').textContent;
+  const firstLine=elements.get('scene-theatre').innerHTML;
+  click({dialogue:'1'});assert.notEqual(elements.get('scene-theatre').innerHTML,firstLine);
+  click({hotspot:'0'});assert.equal(elements.get('observation-dialog').open,true);assert.match(elements.get('observation-title').textContent,/寻人/);
+  click({transcript:''});assert.equal(elements.get('transcript-dialog').open,true);assert.match(elements.get('transcript-lines').innerHTML,/值守员/);
+  assert.equal(elements.get('clock').textContent,before,'dialogue, observation and transcript do not consume time');
+  click({close:'observation-dialog'});click({close:'transcript-dialog'});
   click({page:'choices',index:'1'});assert.match(elements.get('choices').innerHTML,/按自己的计划出发/);
   click({main:'choice:leave'});assert.equal(elements.get('commit-button').disabled,false);
   assert.equal(elements.get('clock').textContent,before,'paging and selecting do not advance time');
