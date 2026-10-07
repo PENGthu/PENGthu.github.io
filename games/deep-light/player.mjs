@@ -44,7 +44,11 @@ async function loadGame() {
     player.setAttribute('aria-label','挖地小子原版游戏画面，方向键移动和挖掘，A S D F G 使用道具。');
     $('player-host').append(player);
     api = player.ruffle();
-    await api.load({url:'./original/FSADIGBOY.swf',base:new URL('./original/',location.href).href});
+    await api.load({
+      url:'./original/FSADIGBOY.swf?v=original-20261007-4',
+      base:new URL('./original/',location.href).href,
+      urlRewriteRules:[[ /FSADIGBOY_RES\.swf(?:\?.*)?$/, 'FSADIGBOY_RES.swf?v=pages-compat-1' ]],
+    });
     api.volume = muted ? 0 : 1;
     paused = false;
     $('cover').hidden = true;

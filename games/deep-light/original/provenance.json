@@ -27,7 +27,7 @@
     ],
     "totalTags": 2397,
     "unchangedTags": 2385,
-    "note": "12 main SWF tags differ: 7 Chinese font-name / text bindings, 1 local save button, 4 ActionScript compatibility classes. Every other tag is byte-identical to the 4399 original. Common resources differ in one save-confirmation text field to credit the local-save repair by PolarZero.",
+    "note": "12 main SWF tags differ: 7 Chinese font-name / text bindings, 1 local save button, 4 ActionScript compatibility classes. Every other main tag is byte-identical to the 4399 original. Common resources have a save-confirmation credit and Pages-origin compatibility strings; see resourcePatch.",
     "resourcePatch": {
       "tagIndices": [
         104,
