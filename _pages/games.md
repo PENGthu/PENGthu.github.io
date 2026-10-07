@@ -3,12 +3,12 @@ permalink: /games/
 title: "Games"
 author_profile: true
 feature_row:
-  - image_path: games/digger-boy.jpg
-    alt: "挖地小子 · 空 原版标题画面"
-    title: "挖地小子 · 空"
-    excerpt: "2009 年童年游戏的原版内容：熟悉的卡通画面、中文剧情、地图、矿石、装备升级、道具、怪物与双结局。原作直接在现代浏览器中运行，修复本机存档，方向键挖掘，A / S / D / F / G 使用道具，无需 Flash。"
+  - image_path: games/cloud-miners.svg
+    alt: "云下矿团 · 小芒与云海风车矿站"
+    title: "云下矿团 · Below the Clouds"
+    excerpt: "原创卡通采矿冒险：和小芒、阿零穿越五个地层，开采八种矿物，升级钻头、氧气瓶、矿袋、护具与喷气背包。点亮四座地下驿站，完成矿团委托，寻找旧城回信，挑战三位风库守卫，让云海重新流动。支持键盘、触屏、三个本机存档位与备份导入导出。"
     url: /games/deep-light/
-    btn_label: "开始挖掘"
+    btn_label: "戴上头盔，出发"
     btn_class: "btn--success"
   - image_path: games/spire-reforged.jpg
     alt: "尖塔重铸 · Spire Reforged 战斗画面"

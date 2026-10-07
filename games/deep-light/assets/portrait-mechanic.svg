@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+<title id="title">老狸，云下矿站机械师</title><desc id="desc">戴工作镜、穿蓝色围裙并带工具的棕灰浣熊。</desc>
+<defs><linearGradient id="bg" x2=".7" y2="1"><stop stop-color="#ffd69a"/><stop offset="1" stop-color="#d9946b"/></linearGradient><linearGradient id="fur" x2=".7" y2="1"><stop stop-color="#bcb09a"/><stop offset="1" stop-color="#8c7861"/></linearGradient><linearGradient id="apron" x2=".4" y2="1"><stop stop-color="#55aab5"/><stop offset="1" stop-color="#286a83"/></linearGradient><linearGradient id="steel" x2="1" y2="1"><stop stop-color="#e4eeee"/><stop offset="1" stop-color="#90a7ac"/></linearGradient></defs>
+<rect width="256" height="256" rx="44" fill="url(#bg)"/>
+<g fill="none" stroke="#fff0c2" opacity=".35" stroke-width="7"><circle cx="41" cy="44" r="20"/><path d="M41 15v10M41 63v10M12 44h10M62 44h10M20 24l8 8M54 57l8 8"/><circle cx="219" cy="186" r="33"/></g>
+<g stroke="#2b3e37" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+<path d="M196 197q36-16 46 11 8 23-21 33l-37 11" fill="url(#fur)"/><path d="M207 194q-3 23 17 42M228 199l-8 33" stroke="#615749" stroke-width="11"/>
+<path d="M58 256l3-53q5-27 35-32h62q37 8 39 42l-2 43" fill="url(#fur)"/>
+<path d="M85 176l9 29h65l10-29-7 68H90z" fill="url(#apron)"/>
+<path d="M57 101L50 58q-2-22 21-10l31 25M168 72l29-25q19-14 23 8l-4 49" fill="url(#fur)"/>
+<path d="M61 60l9 29 18-13M197 61l-15 18 20 9" fill="#775e4f" stroke-width="3"/>
+<path d="M54 104q6-47 63-47 55-4 85 43l6 43q-1 30-28 42-43 17-86 1-35-11-39-42z" fill="url(#fur)"/>
+<path d="M62 111q23-21 53-6l11 24-26 21q-37 3-43-22M139 105q25-15 56 4l10 23q-15 18-41 12l-29-17" fill="#554d43" stroke="none"/>
+<path d="M92 157q34-23 73-5l19 17q-22 30-62 23-34-2-43-19z" fill="#e4d7b9" stroke-width="3"/>
+<ellipse cx="99" cy="127" rx="5" ry="7" fill="#f6e8c5" stroke="none"/><ellipse cx="168" cy="127" rx="5" ry="7" fill="#f6e8c5" stroke="none"/>
+<path d="M115 152q14-9 27 0l-11 14z" fill="#303e35"/>
+<path d="M130 166v9M110 176q11 7 20-1 12 9 22-2" fill="none" stroke-width="3"/>
+<path d="M65 74q56-30 125 5" fill="none" stroke="#916140" stroke-width="15"/>
+<rect x="73" y="58" width="40" height="30" rx="10" fill="#dbb472"/><rect x="137" y="61" width="41" height="30" rx="10" fill="#dbb472"/>
+<rect x="80" y="64" width="26" height="17" rx="6" fill="#9bc9bd" stroke-width="3"/><rect x="145" y="67" width="26" height="17" rx="6" fill="#9bc9bd" stroke-width="3"/>
+<path d="M112 73q13-6 25 3" fill="none" stroke-width="4"/>
+<path d="M67 217l-17 27M187 214l8 28" fill="none" stroke="#695d4c" stroke-width="12"/>
+<rect x="95" y="218" width="58" height="31" rx="5" fill="#3d879e"/>
+<path d="M107 229v14M123 230v12M139 229v13" fill="none" stroke="#78c2c6" stroke-width="3"/>
+<path d="M39 185l14-17 8 6-5 13 14 1 2-12 10-3 4 17-14 16-12-4-19 41-10-5 19-39z" fill="url(#steel)" stroke-width="4"/>
+<path d="M173 231l6-41 14-8 7 13-13 40" fill="#e8b94f" stroke-width="4"/>
+<path d="M185 186l-3-15 6-4 7 15" fill="url(#steel)" stroke-width="3"/>
+</g></svg>

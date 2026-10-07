@@ -1,57 +1,16 @@
-<!doctype html>
-<html lang="zh-CN">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#161c25">
-  <meta name="description" content="挖地小子·空：2009 年原版游戏内容，中文剧情、地图、装备、怪物与双结局。现代浏览器直接玩，支持本机存档。">
-  <title>挖地小子 · 空 — 原版游戏</title>
-  <link rel="icon" href="./icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./style.css?v=original-20261007-4">
-  <script>window.RufflePlayer={config:{publicPath:'./ruffle/',polyfills:false,autoplay:'on',unmuteOverlay:'visible',splashScreen:false,allowScriptAccess:false,openUrlMode:'deny',logLevel:'error',scale:'showAll',letterbox:'on',deviceFontRenderer:'canvas',backgroundExecutionMode:'none'}};</script>
-  <script defer src="./ruffle/ruffle.js"></script>
-  <script type="module" src="./player.mjs?v=original-20261007-4"></script>
-</head>
-<body>
-  <div class="shell">
-    <header>
-      <a class="back" href="../../games/">← 游戏大厅</a>
-      <div class="title"><span class="year">2009</span><h1>挖地小子 <span>· 空</span></h1></div>
-      <p class="subtitle">原版内容 · 中文版 · 本机存档</p>
-    </header>
-    <main>
-      <section class="game-card" aria-label="挖地小子原版游戏">
-        <div class="toolbar">
-          <span class="status" id="status" role="status">准备就绪</span>
-          <div class="actions">
-            <button id="pause" disabled>暂停</button>
-            <button id="sound" disabled aria-pressed="false">声音：开</button>
-            <button id="fullscreen" disabled>全屏</button>
-            <button id="help">操作说明</button>
-          </div>
-        </div>
-        <div class="stage" id="stage">
-          <div class="player-host" id="player-host"></div>
-          <button class="fullscreen-exit" id="exit-fullscreen">退出全屏</button>
-          <div class="cover" id="cover">
-            <div class="cover-inner"><span class="cover-year">OURGAME · 2009</span><h2>挖地小子<span>空</span></h2><p>戴上头盔，再一次出发。</p><button class="primary" id="start">进入原版游戏 <span>→</span></button><small id="load-note">首次加载约 23 MB，请稍等片刻。</small></div>
-          </div>
-          <div class="pause-screen" id="pause-screen" hidden><div><h2>游戏已暂停</h2><p>回来后，接着往下挖。</p><button class="primary" id="resume">继续游戏</button></div></div>
-        </div>
-        <div class="underbar"><span><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd> 移动 / 挖掘　<kbd>↑</kbd> 飞行</span><button id="touch-toggle" aria-expanded="false" aria-controls="touch-controls">显示触屏按键</button></div>
-        <div class="touch-controls" id="touch-controls" hidden aria-label="触屏键盘">
-          <div class="dpad"><button data-key="ArrowUp" aria-label="向上飞行">↑</button><div><button data-key="ArrowLeft" aria-label="向左移动挖掘">←</button><button data-key="ArrowDown" aria-label="向下挖掘">↓</button><button data-key="ArrowRight" aria-label="向右移动挖掘">→</button></div></div>
-          <div class="tool-keys"><span>快捷道具</span><div><button data-key="a">A</button><button data-key="s">S</button><button data-key="d">D</button><button data-key="f">F</button><button data-key="g">G</button></div><small>长按方向移动；点击画面打开背包。</small></div>
-        </div>
-      </section>
-      <div class="notes">
-        <section><h2><span>01</span> 和当年一样玩</h2><p>方向键移动与挖掘，↑ 使用飞行器。走到地表商店门口自动进入商店；点击右侧「包」管理装备和道具，拖到顶部 A / S / D / F / G 栏后按对应字母使用。</p></section>
-        <section><h2><span>02</span> 记得保存进度</h2><p>进入商店，点击商店里的「保存」。进度保留在当前浏览器，下次从原版菜单选择「继续游戏」。右键游戏画面，可在存档管理中下载备份。</p></section>
-      </div>
-    </main>
-    <footer><span>联众 / OurGame 原作 · 浏览器兼容版</span><button id="reload" disabled>重新载入游戏</button><a href="./README.md">版本说明</a></footer>
-  </div>
-  <dialog id="guide"><div class="dialog-top"><h2>操作说明</h2><button id="close-help" aria-label="关闭操作说明">×</button></div><div class="guide-grid"><section><h3>移动与挖掘</h3><p><kbd>←</kbd> <kbd>↓</kbd> <kbd>→</kbd> 移动、开采土块与矿石。<kbd>↑</kbd> 使用飞行器上升。不能向上挖掘；悬空时不能向左右挖掘。</p><h3>装备与道具</h3><p>走到地表商店门口自动进入商店。右侧「包」打开背包，可查看矿石、升级装备，把道具拖入顶部快捷栏，用 <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> <kbd>F</kbd> <kbd>G</kbd> 使用。</p></section><section><h3>存档</h3><p>在原版商店中点击「保存」。回到原版标题后，选择「继续游戏」。存档属于当前浏览器与网址，清除站点数据会清除进度；可右键画面打开存档管理并导出备份。</p><h3>显示与暂停</h3><p>点击画面后使用键盘。全屏保留原版 4:3 比例。切换标签页会暂停；回来点击「继续游戏」。触屏按键发送与键盘相同的方向和道具操作。</p></section></div><button class="primary" id="guide-done">明白了</button></dialog>
-  <noscript>请开启 JavaScript 后运行原版游戏。</noscript>
-</body>
-</html>
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#173c36"><meta name="description" content="云下矿团：原创卡通地底冒险。挖矿卖矿、升级五类装备、点亮四座地下驿站，穿越五个地层，挑战三位风库守卫，让云海重新流动。"><title>云下矿团 · 原创地底冒险</title><link rel="icon" href="./assets/icon.svg"><link rel="stylesheet" href="./style.css?v=cloud-1"><script type="module" src="./app.mjs?v=cloud-1"></script></head><body>
+<div class="shell"><header><a class="back" href="../../games/" aria-label="返回游戏大厅">← 游戏大厅</a><div class="brand"><img src="./assets/icon.svg" alt=""><div><h1>云下矿团</h1><span>BELOW THE CLOUDS</span></div></div><div class="header-actions"><span class="save-status" id="save-status">本机存档</span><button id="sound" class="square" title="声音" aria-label="开启音效">♪</button><button id="help-btn" class="square" title="操作指南" aria-label="操作指南">?</button><button id="pause-btn" class="square" title="暂停" aria-label="暂停游戏">Ⅱ</button></div></header>
+<main><section class="play-column"><div class="hud"><div class="vital"><label>✚ 生命 <b id="hp-text">100 / 100</b></label><div class="meter"><i id="hp-bar"></i></div></div><div class="vital"><label>◒ 氧气 <b id="air-text">120 / 120</b></label><div class="meter"><i id="air-bar"></i></div></div><div class="vital"><label>↑ 燃料 <b id="fuel-text">100 / 100</b></label><div class="meter"><i id="fuel-bar"></i></div></div><div class="currency"><small>矿团金币</small><strong>◈ <span id="coins">80</span></strong></div></div>
+<div class="stage" id="stage"><canvas id="game" width="960" height="600" tabindex="0" aria-label="云下矿团游戏画面，方向键移动挖掘，向上飞行，空格攻击，E交互。"></canvas><div class="stage-top"><span id="area-label">风车矿站</span><button id="fullscreen">⤢ 全屏</button><button id="exit-fullscreen">退出全屏</button></div><div class="fullscreen-vitals" id="fullscreen-vitals" aria-live="off"></div><div id="context" class="context">E · 老狸的矿站商店</div><button id="shop-btn" class="camp-button">老狸的工具车 <kbd>E</kbd></button><div class="boss-hud" id="boss-hud" hidden><strong id="boss-name"></strong><div class="meter"><i id="boss-bar"></i></div></div><div class="heat" id="heat" hidden><span id="heat-text">钻头温度</span><div class="meter"><i id="heat-bar"></i></div></div><div class="toasts" id="toasts" aria-live="polite"></div><div class="stage-loading" id="loading">正在点亮矿站…</div><div class="pause-cover" id="pause-cover" hidden><div><span>TAKE A BREATH</span><h2>风铃还在响。</h2><p>游戏已暂停，氧气不会消耗。</p><button class="primary" id="resume">继续冒险 →</button><button class="ghost" id="pause-save">保存当前进度</button></div></div></div>
+<div class="toolbelt" id="toolbelt"></div><div id="touch-controls" class="touch-controls" aria-label="触屏控制"><div class="dpad"><button data-input="up" aria-label="向上飞行">↑</button><div><button data-input="left" aria-label="向左移动挖掘">←</button><button data-input="down" aria-label="向下挖掘">↓</button><button data-input="right" aria-label="向右移动挖掘">→</button></div></div><button data-input="attack" class="touch-attack" aria-label="挥钻攻击">挥钻</button><button id="touch-interact" aria-label="交互">交互 E</button><small>长按方向<br>松开就停</small></div><div class="underbar"><span><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd> / A S D 挖掘　<kbd>↑</kbd> / W 飞行　<kbd>空格</kbd> 挥钻</span><button id="save-btn">保存</button><button id="slots-btn">存档 / 备份</button></div></section>
+<aside><section class="mission-card"><div class="section-heading"><h2>矿团的回信</h2><span id="chapter">CHAPTER 01</span></div><div class="mission-person"><img src="./assets/portrait-drone.svg" alt="阿零"><p id="mission-text">第一趟下矿：卖出六块赤铜，帮老狸修好风叶。</p></div><div class="wind-seals" id="seals"></div><button id="journal-btn" class="link-button">打开委托与旧城手记 →</button></section><section class="map-card"><div class="section-heading"><h2>探索地图</h2><strong id="depth">0m</strong></div><div class="map-layout"><canvas id="minimap" width="128" height="222" aria-label="已探索的地层、守卫与驿站"></canvas><div class="strata"><span>风根浅层<small>0 – 162m</small></span><span>沉钟水脉<small>168 – 342m</small></span><span>菌光花园<small>348 – 528m</small></span><span>赤炉遗城<small>534 – 714m</small></span><span>风暴心室<small>720m +</small></span></div></div><div class="map-legend"><span>● 小芒</span><span>□ 驿站</span><span>■ 守卫</span></div><button id="relay-btn" class="link-button">查看地下驿站 →</button></section><section class="bag-card"><div class="section-heading"><h2>矿袋</h2><span id="bag-load">0 / 24</span></div><div class="meter"><i id="bag-bar"></i></div><div id="ore-list" class="ore-list"></div><div class="bag-total"><span>可卖出</span><strong>◈ <span id="bag-value">0</span></strong></div></section></aside></main><footer><span>原创角色 · 原创地图与剧情 · 五个地层的冒险</span><button id="restart">开始新的冒险</button></footer></div>
+<dialog id="intro" class="intro-dialog"><img class="cover-art" src="./assets/cover.svg" alt="小芒与云海风车矿站的原创插画"><div class="intro-bottom"><div><span class="eyebrow">给天空，送一封回信。</span><h2>云不动了。<br>我们去地底找风。</h2><p>挖出矿物，修好装备，点亮驿站。和小芒、阿零一起穿过五个地层，唤醒沉睡的风库。</p></div><div class="intro-start"><button class="primary" id="start-btn">戴上头盔，出发 →</button><button class="ghost" id="intro-slots">查看存档</button><span>方向键 / WASD · 电脑与触屏皆可玩</span></div></div></dialog>
+<dialog id="shop" class="shop-dialog"><div class="dialog-heading"><div class="shop-person"><img src="./assets/portrait-mechanic.svg" alt="浣熊机械师老狸"><div><span class="eyebrow">NORI'S WORKSHOP</span><h2>老狸的工具车</h2><p>矿物换金币，好装备陪你走得更深。</p></div></div><button data-close="shop" class="close" aria-label="关闭商店">×</button></div><div class="shop-summary"><span>金币 <strong id="shop-coins">80</strong></span><span>矿袋价值 <strong id="shop-value">0</strong></span><button class="primary" id="sell-btn">出售全部矿物</button></div><div class="tabs"><button class="active" data-shop-tab="gear">装备升级</button><button data-shop-tab="supplies">随身补给</button></div><div id="shop-items" class="shop-items"></div><p class="dialog-note">矿站与已点亮的驿站免费补给生命、氧气和燃料。每条装备线都有五级。</p></dialog>
+<dialog id="journal" class="journal-dialog"><div class="dialog-heading"><div><span class="eyebrow">THE MINERS' POST</span><h2>委托与旧城手记</h2></div><button data-close="journal" class="close" aria-label="关闭手记">×</button></div><div id="quest-list" class="quest-list"></div><h3>旧城信匣 <span id="letters-count"></span></h3><div id="letters" class="letters"></div><div id="stats" class="stats"></div></dialog>
+<dialog id="relays" class="small-dialog"><div class="dialog-heading"><div><span class="eyebrow">LIGHT THE WAY HOME</span><h2>地下驿站</h2></div><button data-close="relays" class="close" aria-label="关闭驿站地图">×</button></div><p>找到驿站，按 E 点亮。站在矿站或已点亮的驿站时，可免费互相传送；在其他地方请使用风铃信标。</p><div id="relay-list"></div></dialog>
+<dialog id="story" class="story-dialog"><button data-close="story" class="close" aria-label="关闭对话">×</button><img id="story-portrait" src="./assets/portrait-drone.svg" alt=""><div><span id="story-who" class="eyebrow"></span><h2 id="story-title"></h2><p id="story-text"></p><button class="primary" data-close="story">收到，继续出发 →</button></div></dialog>
+<dialog id="help" class="help-dialog"><div class="dialog-heading"><div><span class="eyebrow">MINERS' FIELD GUIDE</span><h2>矿团小手册</h2></div><button data-close="help" class="close" aria-label="关闭操作指南">×</button></div><div class="help-grid"><section><h3>移动、挖掘与飞行</h3><p>长按方向键或 A / S / D 开采相邻土块。↑ / W 使用喷气背包；燃料会在地面慢慢恢复。不能向上挖掘，悬空时先找落脚点再横向挖掘。钻头过热时，松开方向键散热。</p><h3>矿袋与装备</h3><p>地表或点亮的驿站按 E 打开商店，卖出矿物并升级钻头、氧气瓶、矿袋、护具和喷气背包。钴钢以上钻头能钻开最深处的岩层。</p><h3>战斗</h3><p>长按空格挥钻，靠近守卫再攻击。攻击有冷却时间。看到「准备闪避」就飞起或远离危险标记。岩爆球可开采硬岩，爆炸也会伤到自己。</p></section><section><h3>随身道具</h3><p>1 急救包 · 2 氧气胶囊 · 3 岩爆球 · 4 风铃信标 · 5 声呐。点击下方道具栏也可使用。背包满时可以挖普通土块，但矿物需要腾出空间。</p><h3>探索与回家</h3><p>走近信匣、驿站按 E 交互。声呐能揭示周围地形。高处坠落、熔流、毒雾和地底生物都有危险；倒下会由阿零送回驿站，保留装备与委托进度，损失部分矿物和金币。</p><h3>保存与暂停</h3><p>进度每 10 秒自动保存，也可手动保存。三个本机存档位可导出备份。P / Esc 暂停；切到其他页面会自动暂停。不同浏览器之间请使用存档导入、导出。</p></section></div><button class="primary" data-close="help">明白了</button></dialog>
+<dialog id="slots" class="slots-dialog"><div class="dialog-heading"><div><span class="eyebrow">YOUR EXPEDITIONS</span><h2>本机存档与备份</h2></div><button data-close="slots" class="close" aria-label="关闭存档管理">×</button></div><div id="slot-list"></div><div class="backup-actions"><button class="primary" id="export">导出当前进度</button><label class="button">导入备份<input id="import" type="file" accept="application/json,.json" hidden></label></div><p class="dialog-note" id="storage-note">存档保存在当前浏览器。清除站点数据会清除进度，请先导出备份。</p></dialog>
+<dialog id="reset" class="small-dialog"><span class="eyebrow">A NEW LETTER</span><h2>从一座新的矿站出发？</h2><p>当前存档位会被新的冒险替换。需要保留进度时，请先导出备份或选择其他存档位。</p><button class="primary" id="confirm-restart">开始新冒险</button><button class="ghost" data-close="reset">保留当前进度</button></dialog>
+<dialog id="win" class="win-dialog"><img src="./assets/portrait-miner.svg" alt="小芒"><span class="eyebrow">THE WIND COMES HOME</span><h2>云海，又开始流动了。</h2><p>三枚风印接回了矿站。老狸打开窗，第一缕风吹响了小芒挂在门口的风铃。</p><div id="win-stats" class="stats"></div><button class="primary" data-close="win">继续探索与完成委托 →</button></dialog>
+<noscript>请启用 JavaScript 运行原创冒险。</noscript></body></html>

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+<title id="title">阿零，云下矿团灯笼机器人</title><desc id="desc">圆形奶油色机身、青绿镜片和小天线，漂浮在星光中。</desc>
+<defs><radialGradient id="bg"><stop stop-color="#b5e4d7"/><stop offset="1" stop-color="#4f9195"/></radialGradient><radialGradient id="shell" cx=".35" cy=".3"><stop stop-color="#fffbe0"/><stop offset=".7" stop-color="#f0d59b"/><stop offset="1" stop-color="#c8a563"/></radialGradient><linearGradient id="glass" x2=".8" y2="1"><stop stop-color="#b5fbd6"/><stop offset=".35" stop-color="#52c2ae"/><stop offset="1" stop-color="#166e75"/></linearGradient><radialGradient id="glow"><stop stop-color="#fff5a9"/><stop offset="1" stop-color="#fff5a9" stop-opacity="0"/></radialGradient></defs>
+<rect width="256" height="256" rx="44" fill="url(#bg)"/>
+<g fill="#e5f6d5"><path d="M42 69l4-11 4 11 11 4-11 4-4 11-4-11-11-4zM205 177l3-9 3 9 9 3-9 3-3 9-3-9-9-3z"/><circle cx="193" cy="53" r="3"/><circle cx="33" cy="188" r="3"/><circle cx="227" cy="97" r="2"/></g>
+<ellipse cx="131" cy="225" rx="47" ry="10" fill="#285d62" opacity=".35"/>
+<ellipse cx="130" cy="203" rx="42" ry="26" fill="url(#glow)"/>
+<g stroke="#293e36" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+<path d="M121 73l-4-22 18-9" fill="none"/><circle cx="138" cy="41" r="9" fill="#f1b955"/>
+<path d="M105 72q23-12 46 0l7 22H99z" fill="#5da695"/>
+<path d="M70 151q-24 1-29-15l-5-14 17-2 16 13M192 137l22-7 9 19-24 15" fill="#f0d598"/>
+<path d="M77 177l-15 19 10 8 20-15M173 190l17 14 11-13-13-14" fill="#5daa9f"/>
+<path d="M120 199v16M148 200v14" fill="none" stroke-width="9"/>
+<path d="M58 139q-1-64 65-62 72-4 78 59 5 58-65 66-73 0-78-63z" fill="url(#shell)"/>
+<path d="M71 121q7-28 39-33" fill="none" stroke="#fffceb" stroke-width="7"/>
+<path d="M58 145q71 18 142-4" fill="none" stroke="#b99a5d" stroke-width="3"/>
+<path d="M95 79q-9 63 9 117M168 84q12 53-2 109" fill="none" stroke="#ccb77b" stroke-width="3"/>
+<rect x="80" y="102" width="99" height="61" rx="28" fill="#519581"/>
+<rect x="88" y="110" width="83" height="45" rx="22" fill="url(#glass)" stroke-width="3"/>
+<path d="M105 130q7-11 14 0M140 130q7-11 14 0" fill="none" stroke="#214e48" stroke-width="4"/>
+<path d="M121 141q8 7 16 0" fill="none" stroke="#214e48" stroke-width="3"/>
+<path d="M98 119l19-3" stroke="#d7fff0" stroke-width="4" opacity=".7"/>
+<circle cx="121" cy="179" r="5" fill="#f0b350" stroke-width="2"/><circle cx="140" cy="179" r="5" fill="#ed784b" stroke-width="2"/>
+</g></svg>

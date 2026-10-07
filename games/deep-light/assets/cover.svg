@@ -1,0 +1,172 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+<title id="title">云下矿团 · 原创地下冒险</title><desc id="desc">小芒、老狸与阿零在云海上的风车矿站集结，山岩剖面显露荧光晶石与沉睡的机械遗迹。</desc>
+<defs>
+<linearGradient id="sky" x2="0" y2="1"><stop stop-color="#75c9d2"/><stop offset=".65" stop-color="#c9efd9"/><stop offset="1" stop-color="#fff2bd"/></linearGradient>
+<linearGradient id="earth" x2="0" y2="1"><stop stop-color="#b98454"/><stop offset="1" stop-color="#624c42"/></linearGradient>
+<linearGradient id="deep" x2="0" y2="1"><stop stop-color="#374e49"/><stop offset="1" stop-color="#162f36"/></linearGradient>
+<linearGradient id="grass" x2="0" y2="1"><stop stop-color="#a4d871"/><stop offset="1" stop-color="#457e64"/></linearGradient>
+<linearGradient id="metal" x2="1" y2="1"><stop stop-color="#dde1bd"/><stop offset="1" stop-color="#839c94"/></linearGradient>
+<radialGradient id="crystal-glow"><stop stop-color="#66ecc4" stop-opacity=".65"/><stop offset="1" stop-color="#66ecc4" stop-opacity="0"/></radialGradient>
+<radialGradient id="sun"><stop stop-color="#fff5c9"/><stop offset="1" stop-color="#fff5c9" stop-opacity="0"/></radialGradient>
+<filter id="shadow" x="-.3" y="-.3" width="1.6" height="1.7"><feDropShadow dx="0" dy="7" stdDeviation="6" flood-color="#163a34" flood-opacity=".22"/></filter>
+<filter id="title-shadow"><feDropShadow dx="1" dy="5" stdDeviation="0" flood-color="#274c41"/></filter>
+
+<linearGradient id="m-bg" x2="0" y2="1"><stop stop-color="#b9eee0"/><stop offset="1" stop-color="#56bca9"/></linearGradient>
+<linearGradient id="m-helmet" x1="0" x2=".6" y2="1"><stop stop-color="#5ed0b7"/><stop offset=".55" stop-color="#27a69d"/><stop offset="1" stop-color="#16736f"/></linearGradient>
+<linearGradient id="m-skin" x2=".8" y2="1"><stop stop-color="#fff0cf"/><stop offset="1" stop-color="#eebc89"/></linearGradient>
+<linearGradient id="m-suit" x2="0" y2="1"><stop stop-color="#ffe4a5"/><stop offset="1" stop-color="#cca95c"/></linearGradient>
+<radialGradient id="m-lamp"><stop stop-color="#fffbd3"/><stop offset=".55" stop-color="#ffe494"/><stop offset="1" stop-color="#e8a947"/></radialGradient>
+<linearGradient id="l-bg" x2=".7" y2="1"><stop stop-color="#ffd69a"/><stop offset="1" stop-color="#d9946b"/></linearGradient><linearGradient id="l-fur" x2=".7" y2="1"><stop stop-color="#bcb09a"/><stop offset="1" stop-color="#8c7861"/></linearGradient><linearGradient id="l-apron" x2=".4" y2="1"><stop stop-color="#55aab5"/><stop offset="1" stop-color="#286a83"/></linearGradient><linearGradient id="l-steel" x2="1" y2="1"><stop stop-color="#e4eeee"/><stop offset="1" stop-color="#90a7ac"/></linearGradient><radialGradient id="d-bg"><stop stop-color="#b5e4d7"/><stop offset="1" stop-color="#4f9195"/></radialGradient><radialGradient id="d-shell" cx=".35" cy=".3"><stop stop-color="#fffbe0"/><stop offset=".7" stop-color="#f0d59b"/><stop offset="1" stop-color="#c8a563"/></radialGradient><linearGradient id="d-glass" x2=".8" y2="1"><stop stop-color="#b5fbd6"/><stop offset=".35" stop-color="#52c2ae"/><stop offset="1" stop-color="#166e75"/></linearGradient><radialGradient id="d-glow"><stop stop-color="#fff5a9"/><stop offset="1" stop-color="#fff5a9" stop-opacity="0"/></radialGradient>
+<g id="cloud" fill="#f4ffe7"><ellipse cx="90" cy="44" rx="90" ry="24"/><ellipse cx="52" cy="26" rx="44" ry="27"/><ellipse cx="111" cy="20" rx="38" ry="29"/><ellipse cx="151" cy="34" rx="35" ry="21"/></g>
+<g id="crystals" stroke="#254943" stroke-width="4" stroke-linejoin="round"><path d="M0 43l5-39 15-14 15 24-9 29z" fill="#72dec0"/><path d="M20 44l18-27 15 6-4 25z" fill="#2fae9e"/><path d="M-3 44l-17-21 9-11 15 23z" fill="#9becd4"/><path d="M5 4l8 10-4 27M38 17l-3 27" fill="none" stroke="#b8ffe1" stroke-width="3"/></g>
+<g id="gold" stroke="#715d35" stroke-width="3"><path d="M0 24l8-21 21-6 11 18-13 16z" fill="#ffd267"/><path d="M8 3l10 13 11-19M18 16l9 15" fill="none" stroke="#fff0a1"/></g>
+<g id="miner-full"><g stroke="#233d35" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+<path d="M86 224l-4 73-10 36 29 6 21-57 12-29 11 52 10 29 30-7-11-91" fill="#bc9656"/><path d="M84 281l24 6M147 285l25-3" fill="none" stroke="#e5ca86" stroke-width="4"/><path d="M73 322l-13 20q-1 15 23 14l24-4 4-25zM153 325l-2 25q4 9 22 7l29-9-17-21" fill="#386d64"/><path d="M62 345l42-6M156 347l40-6" fill="none" stroke="#1f4037" stroke-width="4"/>
+<path d="M67 193q-30 20-39 67l23 9 29-38M188 195q36 17 38 54l-23 9-23-39" fill="#ecd294"/><path d="M31 250q-8 20 3 28 19 8 21-15" fill="#4a7c70"/><path d="M202 244q-5 21 8 27 16 0 20-12l-8-16" fill="#4a7c70"/>
+<path d="M43 271l-41 15 10 35 45-14 8-23z" fill="#ecbd58"/><path d="M2 286l-11 9 9 27 12-1" fill="url(#metal)"/><path d="M-11 297l-17 15-4 22 32-12" fill="#adc3b4"/><path d="M-27 315l20 3M-25 326l17 2" stroke="#627d75" stroke-width="4"/><path d="M11 283l9 30M28 277l9 31" stroke="#ad7440" stroke-width="4"/>
+</g><g stroke="#233d35" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+<path d="M48 244l7-45q6-28 38-32h59q37 5 48 38l6 41" fill="#377e78"/>
+<path d="M63 248l8-57q8-19 29-23h44q27 8 34 28l10 52" fill="url(#m-suit)"/>
+<path d="M148 80q31 4 38 32l-3 57q18 4 7 18 17 9 5 22 13 16-2 23l-16-11q-12-14-3-25-10-13-2-22l-10-34" fill="#894b38"/>
+<path d="M178 176l8 8M179 195l11 9M179 216l9 5" fill="none" stroke="#b16b48" stroke-width="4"/>
+<path d="M96 153v21q25 25 49-1v-24" fill="url(#m-skin)"/>
+<path d="M74 95q-8 43 17 63 30 25 57 9 34-17 31-59l-12-24z" fill="url(#m-skin)"/>
+<path d="M71 110q-17-6-16 10 1 14 17 13M176 110q16-7 16 7-1 14-15 15" fill="url(#m-skin)"/>
+<path d="M72 108q5-20 22-28l28-4 45 9 9 26q-17 0-22-15-9 13-24 7l-5-17q-14 16-41 15l-4 14" fill="#854a35"/>
+<path d="M83 126q8-6 15-1M144 125q9-7 16-1" fill="none" stroke-width="3"/>
+<ellipse cx="95" cy="137" rx="4.7" ry="6" fill="#233d35" stroke="none"/><ellipse cx="151" cy="135" rx="4.7" ry="6" fill="#233d35" stroke="none"/>
+<circle cx="96" cy="134" r="1.6" fill="#fff8d9" stroke="none"/><circle cx="152" cy="132" r="1.6" fill="#fff8d9" stroke="none"/>
+<path d="M111 147q11 12 23-1" fill="none" stroke-width="3"/>
+<path d="M117 137l-3 6h8" fill="none" stroke="#bc8561" stroke-width="2"/>
+<ellipse cx="83" cy="146" rx="8" ry="4" fill="#e9977d" opacity=".65" stroke="none"/><ellipse cx="165" cy="143" rx="7" ry="4" fill="#e9977d" opacity=".65" stroke="none"/>
+<path d="M62 100q0-56 60-60 60-5 64 59z" fill="url(#m-helmet)"/>
+<path d="M78 76q15-24 43-25M84 64l6-5" fill="none" stroke="#a2edd2" stroke-width="7"/>
+<path d="M128 43l-3 45" fill="none" stroke="#197b75" stroke-width="4"/>
+<path d="M57 98q60-17 134-1l-1 12q-55-13-128 6z" fill="#258d84"/>
+<circle cx="139" cy="88" r="23" fill="#d4b66b"/><circle cx="139" cy="88" r="15" fill="url(#m-lamp)" stroke-width="3"/>
+<path d="M132 83l3-3" stroke="#ffffed" stroke-width="5"/>
+<path d="M95 169q24 17 51-3l12 14q-28 29-62 7l-12-12z" fill="#e56642"/>
+<path d="M152 174q20 0 38 14l-16 8-18-8 10 29-17-5-10-26" fill="#e56642"/>
+<path d="M84 196v48M162 195v48" stroke="#2f847b" stroke-width="11"/>
+<rect x="91" y="218" width="59" height="29" rx="6" fill="#e8c786"/>
+<path d="M108 233h24" stroke="#b58d4b" stroke-width="3"/>
+<rect x="78" y="202" width="15" height="11" rx="2" fill="#e7cc87" stroke-width="3"/><rect x="155" y="202" width="15" height="11" rx="2" fill="#e7cc87" stroke-width="3"/>
+</g></g>
+<g id="mechanic"><g stroke="#2b3e37" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+<path d="M196 197q36-16 46 11 8 23-21 33l-37 11" fill="url(#l-fur)"/><path d="M207 194q-3 23 17 42M228 199l-8 33" stroke="#615749" stroke-width="11"/>
+<path d="M58 256l3-53q5-27 35-32h62q37 8 39 42l-2 43" fill="url(#l-fur)"/>
+<path d="M85 176l9 29h65l10-29-7 68H90z" fill="url(#l-apron)"/>
+<path d="M57 101L50 58q-2-22 21-10l31 25M168 72l29-25q19-14 23 8l-4 49" fill="url(#l-fur)"/>
+<path d="M61 60l9 29 18-13M197 61l-15 18 20 9" fill="#775e4f" stroke-width="3"/>
+<path d="M54 104q6-47 63-47 55-4 85 43l6 43q-1 30-28 42-43 17-86 1-35-11-39-42z" fill="url(#l-fur)"/>
+<path d="M62 111q23-21 53-6l11 24-26 21q-37 3-43-22M139 105q25-15 56 4l10 23q-15 18-41 12l-29-17" fill="#554d43" stroke="none"/>
+<path d="M92 157q34-23 73-5l19 17q-22 30-62 23-34-2-43-19z" fill="#e4d7b9" stroke-width="3"/>
+<ellipse cx="99" cy="127" rx="5" ry="7" fill="#f6e8c5" stroke="none"/><ellipse cx="168" cy="127" rx="5" ry="7" fill="#f6e8c5" stroke="none"/>
+<path d="M115 152q14-9 27 0l-11 14z" fill="#303e35"/>
+<path d="M130 166v9M110 176q11 7 20-1 12 9 22-2" fill="none" stroke-width="3"/>
+<path d="M65 74q56-30 125 5" fill="none" stroke="#916140" stroke-width="15"/>
+<rect x="73" y="58" width="40" height="30" rx="10" fill="#dbb472"/><rect x="137" y="61" width="41" height="30" rx="10" fill="#dbb472"/>
+<rect x="80" y="64" width="26" height="17" rx="6" fill="#9bc9bd" stroke-width="3"/><rect x="145" y="67" width="26" height="17" rx="6" fill="#9bc9bd" stroke-width="3"/>
+<path d="M112 73q13-6 25 3" fill="none" stroke-width="4"/>
+<path d="M67 217l-17 27M187 214l8 28" fill="none" stroke="#695d4c" stroke-width="12"/>
+<rect x="95" y="218" width="58" height="31" rx="5" fill="#3d879e"/>
+<path d="M107 229v14M123 230v12M139 229v13" fill="none" stroke="#78c2c6" stroke-width="3"/>
+<path d="M39 185l14-17 8 6-5 13 14 1 2-12 10-3 4 17-14 16-12-4-19 41-10-5 19-39z" fill="url(#l-steel)" stroke-width="4"/>
+<path d="M173 231l6-41 14-8 7 13-13 40" fill="#e8b94f" stroke-width="4"/>
+<path d="M185 186l-3-15 6-4 7 15" fill="url(#l-steel)" stroke-width="3"/>
+</g></g><g id="drone"><g stroke="#293e36" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+<path d="M121 73l-4-22 18-9" fill="none"/><circle cx="138" cy="41" r="9" fill="#f1b955"/>
+<path d="M105 72q23-12 46 0l7 22H99z" fill="#5da695"/>
+<path d="M70 151q-24 1-29-15l-5-14 17-2 16 13M192 137l22-7 9 19-24 15" fill="#f0d598"/>
+<path d="M77 177l-15 19 10 8 20-15M173 190l17 14 11-13-13-14" fill="#5daa9f"/>
+<path d="M120 199v16M148 200v14" fill="none" stroke-width="9"/>
+<path d="M58 139q-1-64 65-62 72-4 78 59 5 58-65 66-73 0-78-63z" fill="url(#d-shell)"/>
+<path d="M71 121q7-28 39-33" fill="none" stroke="#fffceb" stroke-width="7"/>
+<path d="M58 145q71 18 142-4" fill="none" stroke="#b99a5d" stroke-width="3"/>
+<path d="M95 79q-9 63 9 117M168 84q12 53-2 109" fill="none" stroke="#ccb77b" stroke-width="3"/>
+<rect x="80" y="102" width="99" height="61" rx="28" fill="#519581"/>
+<rect x="88" y="110" width="83" height="45" rx="22" fill="url(#d-glass)" stroke-width="3"/>
+<path d="M105 130q7-11 14 0M140 130q7-11 14 0" fill="none" stroke="#214e48" stroke-width="4"/>
+<path d="M121 141q8 7 16 0" fill="none" stroke="#214e48" stroke-width="3"/>
+<path d="M98 119l19-3" stroke="#d7fff0" stroke-width="4" opacity=".7"/>
+<circle cx="121" cy="179" r="5" fill="#f0b350" stroke-width="2"/><circle cx="140" cy="179" r="5" fill="#ed784b" stroke-width="2"/>
+</g></g>
+</defs>
+<rect width="1280" height="720" fill="url(#sky)"/>
+<circle cx="1062" cy="135" r="200" fill="url(#sun)"/><circle cx="1074" cy="112" r="39" fill="#fff4bd"/>
+<use href="#cloud" transform="translate(1050 43) scale(1.2)" opacity=".6"/><use href="#cloud" transform="translate(-33 8) scale(1.6)" opacity=".42"/><use href="#cloud" transform="translate(648 66) scale(.62)" opacity=".85"/>
+<path d="M0 316l102-101 72 32 62-75 87 123 115-136 148 136 107-86 165 163 101-109 185 75 136-91v326H0z" fill="#5daa9e" opacity=".3"/>
+<path d="M0 358l133-53 122 65 95-36 95 41 117-74 117 70 120-23 125 54 133-57 223 60v201H0z" fill="#94c7a9"/>
+<use href="#cloud" transform="translate(526 307) scale(1.6)" opacity=".8"/><use href="#cloud" transform="translate(45 306) scale(1.2)" opacity=".7"/><use href="#cloud" transform="translate(950 270) scale(1.7)" opacity=".67"/>
+<g stroke="#24463e" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+<!-- Cliff cutaway, with three distinct underground biomes. -->
+<path d="M0 422q97-23 172-1 95-17 186 1 109-32 217-7 107-12 240 7 211-38 465 2v296H0z" fill="url(#earth)"/>
+<path d="M0 489q126-23 251 15t211-9q93-9 161 31t225-12q120-9 244 23t188-8v191H0z" fill="#796849" stroke="#b9915c" stroke-width="9"/>
+<path d="M0 601q136-46 219-7t207 7q127-46 242-5t240 3q199-57 372 21v100H0z" fill="url(#deep)" stroke="#4f7161" stroke-width="8"/>
+<path d="M0 421q97-23 172-1 95-17 186 1 109-32 217-7 107-12 240 7 211-38 465 2l-4 26q-132-11-273-1-157 12-251-7-119-7-210 9-101-20-191 2-113-22-176-5-91-16-185 5z" fill="url(#grass)"/>
+<path d="M34 415l-8-16M55 411l4-17M205 422l-3-18M220 419l9-16M649 416l-5-17M665 419l7-22M792 419l-5-18M1167 416l4-14" stroke="#467c57" stroke-width="4"/>
+<!-- Surface windmill station. -->
+<path d="M368 413l9-145h81l10 145" fill="#f6dfaa"/>
+<path d="M356 277l64-55 61 55z" fill="#d26f49"/>
+<path d="M367 271l55-45 49 44" fill="none" stroke="#f49865" stroke-width="5"/>
+<path d="M386 325h24v-35h-24zM433 326h23v-35h-23z" fill="#5e9f9b"/>
+<path d="M400 412v-52q0-19 19-19 18 1 18 19v52" fill="#735e48"/>
+<path d="M396 331l15 1M444 328h10" stroke="#fff4cc" stroke-width="3"/>
+<path d="M349 368h132l9 20H337z" fill="#408f82"/>
+<path d="M353 387v25M473 387v25" fill="none" stroke-width="6"/>
+<path d="M419 254v-72" fill="none" stroke-width="8"/>
+<circle cx="419" cy="212" r="15" fill="#f5dc9c"/>
+<g fill="#f1edbd"><path d="M423 203l10-76 17-15 2 20-21 76zM428 219l77 11 14 17-20 2-76-22zM409 222l-10 76-16 15-2-20 20-75zM408 206l-77-10-14-17 20-2 76 21z"/></g>
+<circle cx="419" cy="212" r="7" fill="#96694b"/>
+<path d="M492 414v-83h125v83" fill="#bda77a"/><path d="M482 334l23-27h93l29 27z" fill="#599582"/>
+<path d="M508 412v-45h28v45M550 412v-45h52v45" fill="#435f53"/>
+<rect x="500" y="341" width="108" height="19" rx="3" fill="#f2d58d" stroke-width="3"/>
+<text x="554" y="356" fill="#294a3f" stroke="none" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="12" font-weight="700">云下矿站</text>
+<path d="M565 366v47M585 366v47" stroke="#e1c486" stroke-width="3"/>
+<path d="M628 414l12-87h18l11 87M642 343h15M639 364h20M635 385h28" fill="none" stroke="#516f5c" stroke-width="5"/>
+<path d="M649 327v-24l35 14-34 13" fill="#e77b4d"/>
+<path d="M480 290q41-40 97 4t71-14" fill="none" stroke="#759686" stroke-width="3"/>
+<path d="M518 287v17M553 294v14M589 299v16M624 296v17" stroke="#617561" stroke-width="3"/>
+<circle cx="518" cy="307" r="5" fill="#f8d37e" stroke-width="2"/><circle cx="553" cy="311" r="5" fill="#f8d37e" stroke-width="2"/><circle cx="589" cy="318" r="5" fill="#f8d37e" stroke-width="2"/><circle cx="624" cy="316" r="5" fill="#f8d37e" stroke-width="2"/>
+<!-- Excavated tunnel and lanterns. -->
+<path d="M113 451v126q0 32 34 32h195q26 0 26-24v-58h185" fill="none" stroke="#303f39" stroke-width="51"/>
+<path d="M113 454v118M151 586h171M368 541h173" fill="none" stroke="#ae925e" stroke-width="6"/>
+<path d="M98 481h32M98 524h32M98 566h32M169 572v33M215 572v33M262 572v33M309 572v33" stroke="#836940" stroke-width="5"/>
+<path d="M71 452h87v13H71z" fill="#52685a"/>
+<path d="M225 576v-22" fill="none" stroke="#c4a16a" stroke-width="3"/>
+<rect x="216" y="554" width="18" height="25" rx="3" fill="#edc66d" stroke-width="3"/><path d="M221 558v15" stroke="#fff4bf" stroke-width="3"/>
+<path d="M467 512v-12" stroke="#c4a16a" stroke-width="3"/><rect x="458" y="500" width="18" height="25" rx="3" fill="#edc66d" stroke-width="3"/>
+<!-- Root canopy and ore texture. -->
+<path d="M254 448l-17 42 15 17-5 24M250 476l31 8 12 18M695 449l-4 30 17 17-7 27M691 479l-27 12-9 19" fill="none" stroke="#6e5b43" stroke-width="5"/>
+<path d="M32 475l25-10 13 11-13 14-29-3zM276 453l28-4 13 21-26 9-20-7zM603 461l30 10-3 20-25 8-15-23zM802 463l25 12-8 20-30-5z" fill="#aa8451" stroke="#766443" stroke-width="3"/>
+<path d="M37 539l17-4 13 22-22 9-13-15zM566 584l23-8 18 17-6 22-25 4-16-17zM723 562l31 6 10 20-31 5-13-17z" fill="#806f4f" stroke="#a0895c" stroke-width="3"/>
+<!-- Subterranean mechanical relic. -->
+<path d="M602 684v-42q0-43 43-43h85q39 0 39 39v46" fill="#536e65"/>
+<path d="M614 678v-34q0-29 31-29h83q27 0 27 26v37" fill="#233e3d" stroke="#879c82" stroke-width="5"/>
+<path d="M650 616v62M725 616v62" stroke="#537b70" stroke-width="3"/>
+<circle cx="685" cy="646" r="29" fill="#9caa85"/><circle cx="685" cy="646" r="20" fill="#69c6a3"/><circle cx="685" cy="646" r="11" fill="#23594f"/>
+<path d="M665 593v-16h42v17M636 604l-10-19M743 605l10-20" fill="none" stroke="#9caa85" stroke-width="7"/>
+<path d="M556 656h48M553 656v-28h-28M768 654h37v-19h28" fill="none" stroke="#82977a" stroke-width="9"/>
+<path d="M538 677l13-14M818 677l-12-14" stroke="#b4b392" stroke-width="5"/>
+<path d="M807 696l-18-32 17-32 27 21 4 44M870 714l3-43 25-31 21 33-5 40" fill="#2c5f56" stroke="#47816b"/>
+<path d="M0 699q103-28 172-6t145-7q107-4 194 16t147-4q159-23 291 2 160-25 331-13v33H0z" fill="#23413e"/>
+</g>
+<g fill="url(#crystal-glow)"><ellipse cx="303" cy="634" rx="106" ry="78"/><ellipse cx="513" cy="592" rx="84" ry="73"/><ellipse cx="803" cy="560" rx="84" ry="74"/></g>
+<use href="#crystals" transform="translate(303 634) scale(1.45)"/><use href="#crystals" transform="translate(506 577) scale(.8)"/><use href="#crystals" transform="translate(811 542) scale(.8)"/>
+<use href="#gold" transform="translate(185 483) scale(.7)"/><use href="#gold" transform="translate(416 465) scale(.8)"/><use href="#gold" transform="translate(66 635) scale(1.1)"/>
+<g fill="#c1ead2" opacity=".7"><circle cx="312" cy="581" r="3"/><circle cx="277" cy="614" r="2"/><circle cx="472" cy="563" r="3"/><circle cx="555" cy="608" r="2"/><circle cx="785" cy="524" r="2"/><circle cx="837" cy="562" r="2"/></g>
+<!-- Original character trio. -->
+<use href="#mechanic" transform="translate(276 321) scale(.34)" filter="url(#shadow)"/>
+<use href="#drone" transform="translate(717 190) scale(.65) rotate(-9 128 128)" filter="url(#shadow)"/>
+<path d="M874 681q189-36 406 6v33H852z" fill="#537764" stroke="#25463c" stroke-width="5"/>
+<path d="M896 700l43-9 31 16M1207 693l32 8" fill="none" stroke="#7e9d78" stroke-width="5"/>
+<use href="#miner-full" transform="translate(851 161) scale(1.58) rotate(3 128 300)" filter="url(#shadow)"/>
+<!-- Warm title lettering, with unobstructed sky behind it. -->
+<g font-family="PingFang SC,Microsoft YaHei,Noto Sans CJK SC,sans-serif" font-weight="900" filter="url(#title-shadow)">
+<text x="68" y="149" fill="#fff2c4" stroke="#274c41" stroke-width="9" paint-order="stroke" font-size="91" letter-spacing="6">云下矿团</text>
+</g>
+<path d="M80 177q102 12 224-1" fill="none" stroke="#3f8071" stroke-width="3" opacity=".7"/>
+<text x="81" y="207" font-family="PingFang SC,Microsoft YaHei,sans-serif" fill="#315e50" font-size="24" font-weight="700" letter-spacing="4">下一站，地心！</text>
+<g transform="translate(81 227)"><rect width="253" height="30" rx="15" fill="#2b695b"/><text x="126" y="21" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="14" font-weight="600" fill="#e8f7d8" letter-spacing="3">挖掘 · 寻宝 · 升级 · 探险</text></g>
+<g fill="#375f51" opacity=".65"><path d="M706 129q11-11 22 0 10-12 23-2-22-5-23 5-10-7-22-3M659 157q9-8 16-1 10-8 18-2-16-3-18 4-7-5-16-1"/></g>
+</svg>

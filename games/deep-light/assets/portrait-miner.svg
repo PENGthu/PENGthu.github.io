@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+<title id="title">小芒，云下矿团的年轻矿工</title><desc id="desc">戴蓝绿色头盔、暖黄头灯和橙色围巾的辫子女孩。</desc>
+<defs>
+<linearGradient id="bg" x2="0" y2="1"><stop stop-color="#b9eee0"/><stop offset="1" stop-color="#56bca9"/></linearGradient>
+<linearGradient id="helmet" x1="0" x2=".6" y2="1"><stop stop-color="#5ed0b7"/><stop offset=".55" stop-color="#27a69d"/><stop offset="1" stop-color="#16736f"/></linearGradient>
+<linearGradient id="skin" x2=".8" y2="1"><stop stop-color="#fff0cf"/><stop offset="1" stop-color="#eebc89"/></linearGradient>
+<linearGradient id="suit" x2="0" y2="1"><stop stop-color="#ffe4a5"/><stop offset="1" stop-color="#cca95c"/></linearGradient>
+<radialGradient id="lamp"><stop stop-color="#fffbd3"/><stop offset=".55" stop-color="#ffe494"/><stop offset="1" stop-color="#e8a947"/></radialGradient>
+</defs>
+<rect width="256" height="256" rx="44" fill="url(#bg)"/>
+<path d="M18 97h20M30 85v24M209 46h18M218 37v18M204 201h22M215 190v22" stroke="#dbfff0" stroke-width="3" opacity=".7"/>
+<circle cx="54" cy="49" r="18" fill="#f0ffe7" opacity=".22"/><circle cx="213" cy="123" r="43" fill="#e9fff1" opacity=".15"/>
+<g stroke="#233d35" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+<path d="M48 244l7-45q6-28 38-32h59q37 5 48 38l6 41" fill="#377e78"/>
+<path d="M63 248l8-57q8-19 29-23h44q27 8 34 28l10 52" fill="url(#suit)"/>
+<path d="M148 80q31 4 38 32l-3 57q18 4 7 18 17 9 5 22 13 16-2 23l-16-11q-12-14-3-25-10-13-2-22l-10-34" fill="#894b38"/>
+<path d="M178 176l8 8M179 195l11 9M179 216l9 5" fill="none" stroke="#b16b48" stroke-width="4"/>
+<path d="M96 153v21q25 25 49-1v-24" fill="url(#skin)"/>
+<path d="M74 95q-8 43 17 63 30 25 57 9 34-17 31-59l-12-24z" fill="url(#skin)"/>
+<path d="M71 110q-17-6-16 10 1 14 17 13M176 110q16-7 16 7-1 14-15 15" fill="url(#skin)"/>
+<path d="M72 108q5-20 22-28l28-4 45 9 9 26q-17 0-22-15-9 13-24 7l-5-17q-14 16-41 15l-4 14" fill="#854a35"/>
+<path d="M83 126q8-6 15-1M144 125q9-7 16-1" fill="none" stroke-width="3"/>
+<ellipse cx="95" cy="137" rx="4.7" ry="6" fill="#233d35" stroke="none"/><ellipse cx="151" cy="135" rx="4.7" ry="6" fill="#233d35" stroke="none"/>
+<circle cx="96" cy="134" r="1.6" fill="#fff8d9" stroke="none"/><circle cx="152" cy="132" r="1.6" fill="#fff8d9" stroke="none"/>
+<path d="M111 147q11 12 23-1" fill="none" stroke-width="3"/>
+<path d="M117 137l-3 6h8" fill="none" stroke="#bc8561" stroke-width="2"/>
+<ellipse cx="83" cy="146" rx="8" ry="4" fill="#e9977d" opacity=".65" stroke="none"/><ellipse cx="165" cy="143" rx="7" ry="4" fill="#e9977d" opacity=".65" stroke="none"/>
+<path d="M62 100q0-56 60-60 60-5 64 59z" fill="url(#helmet)"/>
+<path d="M78 76q15-24 43-25M84 64l6-5" fill="none" stroke="#a2edd2" stroke-width="7"/>
+<path d="M128 43l-3 45" fill="none" stroke="#197b75" stroke-width="4"/>
+<path d="M57 98q60-17 134-1l-1 12q-55-13-128 6z" fill="#258d84"/>
+<circle cx="139" cy="88" r="23" fill="#d4b66b"/><circle cx="139" cy="88" r="15" fill="url(#lamp)" stroke-width="3"/>
+<path d="M132 83l3-3" stroke="#ffffed" stroke-width="5"/>
+<path d="M95 169q24 17 51-3l12 14q-28 29-62 7l-12-12z" fill="#e56642"/>
+<path d="M152 174q20 0 38 14l-16 8-18-8 10 29-17-5-10-26" fill="#e56642"/>
+<path d="M84 196v48M162 195v48" stroke="#2f847b" stroke-width="11"/>
+<rect x="91" y="218" width="59" height="29" rx="6" fill="#e8c786"/>
+<path d="M108 233h24" stroke="#b58d4b" stroke-width="3"/>
+<rect x="78" y="202" width="15" height="11" rx="2" fill="#e7cc87" stroke-width="3"/><rect x="155" y="202" width="15" height="11" rx="2" fill="#e7cc87" stroke-width="3"/>
+</g>
+<path d="M14 256q105-10 229 0" fill="#386e60" opacity=".2"/>
+</svg>
