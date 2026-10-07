@@ -17,6 +17,13 @@ feature_row:
     url: /games/spire-reforged/
     btn_label: "开始游戏"
     btn_class: "btn--success"
+  - image_path: games/ark-nova.jpg
+    alt: "方舟动物园 · 对局画面"
+    title: "方舟动物园 · Ark Nova"
+    excerpt: "桌游《方舟动物园》的网页还原版：5 张行动卡轮转，在六边形地图上修建围栏、引进动物，结交合作动物园与大学，支持野生动物保护项目，让吸引力与保护点数两个标记相遇。134 种动物、64 张赞助卡、32 个保护项目、7 张地图。1–4 人，可以和三档 AI 对战，也可以多人同屏轮流，还有单人挑战。支持电脑与手机，进度保存在本机。"
+    url: /games/ark-nova/
+    btn_label: "开始经营"
+    btn_class: "btn--success"
   - image_path: games/jiudun-dive.svg
     alt: "九顿 · 下潜 洞穴剖面"
     title: "九顿 · 下潜 · Jiudun Cave Dive"
